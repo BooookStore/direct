@@ -1,7 +1,6 @@
 package org.direct.applicationservice
 
 import org.assertj.core.api.Assertions.assertThat
-import org.direct.adapter.IncrementalQuestionIdentityGenerator
 import org.direct.domain.user.UserId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,7 +12,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
     @BeforeEach
     fun beforeEach() {
         questionApplicationService = QuestionApplicationService(
-            IncrementalQuestionIdentityGenerator(),
+            incrementalQuestionIdentityGenerator(),
             inMemoryQuestionRepository(),
         )
     }

@@ -1,3 +1,5 @@
+@file:Suppress("RemoveEmptyClassBody")
+
 package org.direct.applicationservice
 
 import org.direct.adapter.InMemoryQuestionRepository

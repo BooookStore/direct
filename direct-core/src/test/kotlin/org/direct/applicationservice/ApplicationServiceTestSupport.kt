@@ -1,8 +1,8 @@
 package org.direct.applicationservice
 
 import org.direct.adapter.InMemoryQuestionRepository
-import org.direct.adapter.TestEnvironmentDomainRegistryResolver
 import org.direct.domain.DomainRegistry
+import org.direct.domain.DomainRegistryResolver
 import org.junit.jupiter.api.BeforeEach
 
 internal abstract class ApplicationServiceTestSupport {
@@ -16,5 +16,9 @@ internal abstract class ApplicationServiceTestSupport {
     }
 
     fun inMemoryQuestionRepository() = inMemoryQuestionRepository ?: throw NullPointerException()
+
+}
+
+class TestEnvironmentDomainRegistryResolver : DomainRegistryResolver {
 
 }

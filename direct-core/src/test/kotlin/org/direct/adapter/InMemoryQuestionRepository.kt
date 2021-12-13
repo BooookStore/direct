@@ -8,12 +8,20 @@ class InMemoryQuestionRepository : QuestionRepository {
 
     val entities: MutableMap<QuestionId, Question> = HashMap()
 
+    private fun Question.copy() = Question(
+        id = this.id,
+        title = this.title,
+        subject = this.subject,
+        questioner = this.questioner,
+        status = this.status
+    )
+
     override fun save(question: Question) {
-        entities[question.id] = question
+        entities[question.id] = question.copy()
     }
 
     override fun findById(questionId: QuestionId): Question? {
-        TODO("Not yet implemented")
+        return entities[questionId]?.copy()
     }
 
 }

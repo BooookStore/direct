@@ -17,6 +17,8 @@ class QuestionApplicationService(
 ) {
 
     fun newQuestion(command: QuestionNewCommand): QuestionId {
+        if (!userRepository.exist(UserId(command.questionerUserId))) throw IllegalArgumentException("user not exist")
+
         val newQuestionId = questionIdentityGenerator.generateIdentity()
         val newQuestion = Question.new(
             id = newQuestionId,

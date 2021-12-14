@@ -8,4 +8,6 @@ interface UserRepository {
 
     fun findById(userId: UserId): User?
 
+    fun exist(userId: UserId): Boolean = findById(userId) != null
+
 }

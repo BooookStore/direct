@@ -2,6 +2,7 @@ package org.direct.applicationservice
 
 import org.assertj.core.api.Assertions.assertThat
 import org.direct.domain.question.QuestionStatus.CLOSED
+import org.direct.domain.user.User
 import org.direct.domain.user.UserId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,6 +18,8 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             inMemoryQuestionRepository(),
             inMemoryUserRepository(),
         )
+
+        inMemoryUserRepository().save(User(UserId("USER1")))
     }
 
     @Test

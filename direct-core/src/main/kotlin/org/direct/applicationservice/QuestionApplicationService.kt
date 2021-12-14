@@ -8,10 +8,12 @@ import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionIdentityGenerator
 import org.direct.domain.question.QuestionRepository
 import org.direct.domain.user.UserId
+import org.direct.domain.user.UserRepository
 
 class QuestionApplicationService(
     private val questionIdentityGenerator: QuestionIdentityGenerator,
     private val questionRepository: QuestionRepository,
+    private val userRepository: UserRepository,
 ) {
 
     fun newQuestion(command: QuestionNewCommand): QuestionId {

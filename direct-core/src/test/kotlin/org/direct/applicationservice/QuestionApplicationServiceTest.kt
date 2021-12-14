@@ -15,6 +15,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         questionApplicationService = QuestionApplicationService(
             incrementalQuestionIdentityGenerator(),
             inMemoryQuestionRepository(),
+            inMemoryUserRepository(),
         )
     }
 

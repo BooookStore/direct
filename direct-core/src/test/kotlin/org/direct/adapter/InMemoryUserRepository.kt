@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package org.direct.adapter
 
 import org.direct.domain.user.User

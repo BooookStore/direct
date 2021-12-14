@@ -8,13 +8,17 @@ import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionIdentityGenerator
 import org.direct.domain.question.QuestionRepository
 import org.direct.domain.user.UserId
+import org.direct.domain.user.UserRepository
 
 class QuestionApplicationService(
     private val questionIdentityGenerator: QuestionIdentityGenerator,
     private val questionRepository: QuestionRepository,
+    private val userRepository: UserRepository,
 ) {
 
     fun newQuestion(command: QuestionNewCommand): QuestionId {
+        command.assertUserExist()
+
         val newQuestionId = questionIdentityGenerator.generateIdentity()
         val newQuestion = Question.new(
             id = newQuestionId,
@@ -53,6 +57,10 @@ class QuestionApplicationService(
             ?: throw EntityNotFoundException("question not found : $questionId")
         question.delete()
         questionRepository.save(question)
+    }
+
+    private fun QuestionNewCommand.assertUserExist() {
+        if (userRepository.exist(UserId(questionerUserId)).not()) throw IllegalArgumentException("user not exist")
     }
 
 }

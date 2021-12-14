@@ -17,7 +17,7 @@ class QuestionApplicationService(
 ) {
 
     fun newQuestion(command: QuestionNewCommand): QuestionId {
-        if (!userRepository.exist(UserId(command.questionerUserId))) throw IllegalArgumentException("user not exist")
+        command.assertUserExist()
 
         val newQuestionId = questionIdentityGenerator.generateIdentity()
         val newQuestion = Question.new(
@@ -57,6 +57,10 @@ class QuestionApplicationService(
             ?: throw EntityNotFoundException("question not found : $questionId")
         question.delete()
         questionRepository.save(question)
+    }
+
+    private fun QuestionNewCommand.assertUserExist() {
+        if (userRepository.exist(UserId(questionerUserId)).not()) throw IllegalArgumentException("user not exist")
     }
 
 }

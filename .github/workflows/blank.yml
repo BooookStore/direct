@@ -34,3 +34,13 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v2.4.0
+        with:
+          java-version: 11
+          distribution: temurin
+          cache: 'maven'
+
+      - name: test
+        run: mvn test

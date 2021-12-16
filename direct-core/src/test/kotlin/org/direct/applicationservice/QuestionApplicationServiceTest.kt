@@ -2,8 +2,13 @@ package org.direct.applicationservice
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.direct.domain.question.NotAllowedEditQuestionException
+import org.direct.domain.question.Question
+import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionStatus.CLOSED
+import org.direct.domain.question.QuestionStatus.OPENED
 import org.direct.domain.user.User
+import org.direct.domain.user.UserCategory.NORMAL
 import org.direct.domain.user.UserId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -21,7 +26,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             inMemoryUserRepository(),
         )
 
-        inMemoryUserRepository().save(User(UserId("USER1")))
+        inMemoryUserRepository().save(User(UserId("USER1"), NORMAL))
     }
 
     @Nested
@@ -60,6 +65,61 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             // execute & verify
             assertThatThrownBy { questionApplicationService.newQuestion(command) }
                 .isExactlyInstanceOf(IllegalArgumentException::class.java)
+        }
+
+    }
+
+    @Nested
+    inner class EditQuestion {
+
+        @BeforeEach
+        fun beforeEach() {
+            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+            inMemoryQuestionRepository().save(
+                Question(
+                    id = QuestionId("QUESTION1"),
+                    title = "how install Apache Maven ?",
+                    subject = "I want to install Apache Maven.",
+                    questioner = UserId("USER1"),
+                    status = OPENED
+                )
+            )
+        }
+
+        @Test
+        fun `can edit question by questioner`() {
+            val command = QuestionEditCommand(
+                id = "QUESTION1",
+                title = "how install Apache Maven 3",
+                subject = "I want to install Apache Maven.",
+                editUserId = "USER1",
+            )
+
+            // execute
+            questionApplicationService.editQuestion(command)
+
+            // verify
+            inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
+                assertThat(it).isNotNull
+                assertThat(it?.title).isEqualTo("how install Apache Maven 3")
+                assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
+                assertThat(it?.questioner).isEqualTo(UserId("USER1"))
+                assertThat(it?.status).isEqualTo(OPENED)
+            }
+        }
+
+        @Test
+        fun `cannot edit question by other user`() {
+            val command = QuestionEditCommand(
+                id = "QUESTION1",
+                title = "how install Apache Maven 3",
+                subject = "I want to install Apache Maven.",
+                editUserId = "USER2",
+            )
+
+            // execute & verify
+            assertThatThrownBy { questionApplicationService.editQuestion(command) }
+                .isExactlyInstanceOf(NotAllowedEditQuestionException::class.java)
         }
 
     }

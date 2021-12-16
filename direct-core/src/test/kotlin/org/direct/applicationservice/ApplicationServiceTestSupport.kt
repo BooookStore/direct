@@ -19,10 +19,11 @@ internal abstract class ApplicationServiceTestSupport {
 
     @BeforeEach
     fun initializeDomainRegistry() {
-        DomainRegistry.initialize(TestEnvironmentDomainRegistryResolver())
         inMemoryQuestionRepository = InMemoryQuestionRepository()
         inMemoryUserRepository = InMemoryUserRepository()
         incrementalQuestionIdentityGenerator = IncrementalQuestionIdentityGenerator()
+
+        DomainRegistry.initialize(TestEnvironmentDomainRegistryResolver())
     }
 
     fun inMemoryQuestionRepository() = inMemoryQuestionRepository ?: throw NullPointerException()

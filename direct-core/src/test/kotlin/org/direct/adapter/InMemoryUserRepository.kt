@@ -8,7 +8,7 @@ class InMemoryUserRepository : UserRepository {
 
     private val entities: MutableMap<UserId, User> = HashMap()
 
-    private fun User.copy() = User(id = this.id)
+    private fun User.copy() = User(id = this.id, category = this.category)
 
     override fun save(user: User) {
         entities[user.id] = user.copy()

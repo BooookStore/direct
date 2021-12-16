@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.direct.domain
 
 object DomainRegistry {
@@ -9,3 +11,5 @@ object DomainRegistry {
     }
 
 }
+
+class DomainRegistryNotInitializedException : Throwable()

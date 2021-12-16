@@ -77,7 +77,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
             inMemoryQuestionRepository().save(
                 Question(
-                    id = QuestionId("1"),
+                    id = QuestionId("QUESTION1"),
                     title = "how install Apache Maven ?",
                     subject = "I want to install Apache Maven.",
                     questioner = UserId("USER1"),
@@ -89,7 +89,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `can edit question by questioner`() {
             val command = QuestionEditCommand(
-                id = "1",
+                id = "QUESTION1",
                 title = "how install Apache Maven 3",
                 subject = "I want to install Apache Maven.",
                 editUserId = "USER1",
@@ -99,7 +99,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             questionApplicationService.editQuestion(command)
 
             // verify
-            inMemoryQuestionRepository().findById(QuestionId("1")).let {
+            inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
                 assertThat(it).isNotNull
                 assertThat(it?.title).isEqualTo("how install Apache Maven 3")
                 assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
@@ -111,7 +111,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `cannot edit question by other user`() {
             val command = QuestionEditCommand(
-                id = "1",
+                id = "QUESTION1",
                 title = "how install Apache Maven 3",
                 subject = "I want to install Apache Maven.",
                 editUserId = "USER2",

@@ -15,7 +15,7 @@ class QuestionApplicationService(
 ) {
 
     fun newQuestion(command: QuestionNewCommand): QuestionId {
-        command.assertUserExist()
+        command.questionerUserId.assertUserExist()
 
         val newQuestionId = questionIdentityGenerator.generateIdentity()
         val newQuestion = Question.new(
@@ -29,8 +29,8 @@ class QuestionApplicationService(
     }
 
     fun editQuestion(command: QuestionEditCommand) {
-        command.assertUserExist()
-        command.assertQuestionExist()
+        command.id.assertQuestionExist()
+        command.editUserId.assertUserExist()
 
         val question = questionRepository.findById(QuestionId(command.id))
             ?: throw EntityNotFoundException("question not found : $command.id")
@@ -65,16 +65,12 @@ class QuestionApplicationService(
         questionRepository.save(question)
     }
 
-    private fun QuestionNewCommand.assertUserExist() {
-        if (userRepository.exist(UserId(questionerUserId)).not()) throw IllegalArgumentException("user not exist")
+    private fun String.assertUserExist() {
+        if (userRepository.exist(UserId(this)).not()) throw IllegalArgumentException("user not exist")
     }
 
-    private fun QuestionEditCommand.assertUserExist() {
-        if (userRepository.exist(UserId(editUserId)).not()) throw IllegalArgumentException("user not exist")
-    }
-
-    private fun QuestionEditCommand.assertQuestionExist() {
-        if (questionRepository.exist(QuestionId(id)).not()) throw IllegalArgumentException("question not exist")
+    private fun String.assertQuestionExist() {
+        if (questionRepository.exist(QuestionId(this)).not()) throw IllegalArgumentException("question not exist")
     }
 
 }

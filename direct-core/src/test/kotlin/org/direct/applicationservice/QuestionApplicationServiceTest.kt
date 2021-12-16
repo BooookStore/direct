@@ -89,7 +89,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `can edit question by questioner`() {
             val command = QuestionEditCommand(
-                id = "QUESTION1",
+                questionId = "QUESTION1",
                 title = "how install Apache Maven 3",
                 subject = "I want to install Apache Maven.",
                 editUserId = "USER1",
@@ -111,7 +111,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `cannot edit question by other user`() {
             val command = QuestionEditCommand(
-                id = "QUESTION1",
+                questionId = "QUESTION1",
                 title = "how install Apache Maven 3",
                 subject = "I want to install Apache Maven.",
                 editUserId = "USER2",

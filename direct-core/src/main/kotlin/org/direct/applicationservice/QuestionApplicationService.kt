@@ -29,15 +29,15 @@ class QuestionApplicationService(
     }
 
     fun editQuestion(command: QuestionEditCommand) {
-        command.id.assertQuestionExist()
+        command.questionId.assertQuestionExist()
         command.editUserId.assertUserExist()
 
-        val question = questionRepository.findById(QuestionId(command.id))
+        val question = questionRepository.findById(QuestionId(command.questionId))
             ?: throw EntityNotFoundException("question not found : $command.id")
         val editUser = userRepository.findById(UserId(command.editUserId))
             ?: throw EntityNotFoundException("user not found : $command.editUserId")
 
-        if ((editUser canEdit question).not()) throw NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.id}")
+        if ((editUser canEdit question).not()) throw NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.questionId}")
 
         question.editTitle(command.title)
         question.editSubject(command.subject)
@@ -82,7 +82,7 @@ data class QuestionNewCommand(
 )
 
 data class QuestionEditCommand(
-    val id: String,
+    val questionId: String,
     val title: String,
     val subject: String,
     val editUserId: String,

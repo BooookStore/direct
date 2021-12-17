@@ -87,6 +87,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
         @Test
         fun `can edit question by questioner`() {
+            // setup
             val command = QuestionEditCommand(
                 questionId = "QUESTION1",
                 title = "how install Apache Maven 3",

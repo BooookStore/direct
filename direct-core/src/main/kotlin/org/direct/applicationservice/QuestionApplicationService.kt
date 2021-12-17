@@ -29,6 +29,7 @@ class QuestionApplicationService(
     }
 
     fun editQuestion(command: QuestionEditCommand) {
+        var x = null
         command.questionId.assertQuestionExist()
         command.editUserId.assertUserExist()
 

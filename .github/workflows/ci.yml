@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  maven-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,3 +33,9 @@ jobs:
 
       - name: test
         run: mvn test
+
+    qodana:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - uses: JetBrains/qodana-action@v4.0.0

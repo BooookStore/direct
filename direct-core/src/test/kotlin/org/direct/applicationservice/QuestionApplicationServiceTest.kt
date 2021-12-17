@@ -129,29 +129,18 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
         }
 
-    }
+        @Test
+        fun `user can close question`() {
+            // execute
+            questionApplicationService.closeQuestion("QUESTION1")
 
-    @Test
-    fun `user can close question`() {
-        // setup
-        // create new question
-        inMemoryQuestionRepository().save(
-            Question(
-                id = QuestionId("QUESTION1"),
-                title = "how install Apache Maven ?",
-                subject = "I want to install Apache Maven.",
-                questioner = UserId("USER1"),
-                status = OPENED
-            )
-        )
+            // verify
+            inMemoryQuestionRepository().entities[QuestionId("QUESTION1")].let {
+                assertThat(it?.status).isEqualTo(CLOSED)
+            }
 
-        // execute
-        questionApplicationService.closeQuestion("QUESTION1")
-
-        // verify
-        inMemoryQuestionRepository().entities[QuestionId("QUESTION1")].let {
-            assertThat(it?.status).isEqualTo(CLOSED)
         }
+
     }
 
 }

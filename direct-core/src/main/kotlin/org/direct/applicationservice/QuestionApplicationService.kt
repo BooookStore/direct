@@ -29,7 +29,6 @@ class QuestionApplicationService(
     }
 
     fun editQuestion(command: QuestionEditCommand) {
-        var x = null
         command.questionId.assertQuestionExist()
         command.editUserId.assertUserExist()
 
@@ -67,11 +66,13 @@ class QuestionApplicationService(
     }
 
     private fun String.assertUserExist() {
-        if (userRepository.exist(UserId(this)).not()) throw IllegalArgumentException("user not exist : $this")
+        if (userRepository.exist(UserId(this)).not())
+            throw IllegalArgumentException("user not exist : $this")
     }
 
     private fun String.assertQuestionExist() {
-        if (questionRepository.exist(QuestionId(this)).not()) throw IllegalArgumentException("question not exist : $this")
+        if (questionRepository.exist(QuestionId(this)).not())
+            throw IllegalArgumentException("question not exist : $this")
     }
 
 }

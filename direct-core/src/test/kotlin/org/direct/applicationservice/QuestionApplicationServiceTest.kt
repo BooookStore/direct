@@ -128,19 +128,21 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
     fun `user can close question`() {
         // setup
         // create new question
-        val newQuestionId = questionApplicationService.newQuestion(
-            QuestionNewCommand(
+        inMemoryQuestionRepository().save(
+            Question(
+                id = QuestionId("QUESTION1"),
                 title = "how install Apache Maven ?",
                 subject = "I want to install Apache Maven.",
-                questionerUserId = "USER1",
+                questioner = UserId("USER1"),
+                status = OPENED
             )
         )
 
         // execute
-        questionApplicationService.closeQuestion(newQuestionId.rawId)
+        questionApplicationService.closeQuestion("QUESTION1")
 
         // verify
-        inMemoryQuestionRepository().entities[newQuestionId].let {
+        inMemoryQuestionRepository().entities[QuestionId("QUESTION1")].let {
             assertThat(it?.status).isEqualTo(CLOSED)
         }
     }

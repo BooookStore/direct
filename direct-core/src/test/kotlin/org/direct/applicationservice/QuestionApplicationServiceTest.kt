@@ -85,48 +85,43 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             )
         }
 
-        @Nested
-        inner class EditQuestion {
+        @Test
+        fun `can edit question by questioner`() {
+            val command = QuestionEditCommand(
+                questionId = "QUESTION1",
+                title = "how install Apache Maven 3",
+                subject = "I want to install Apache Maven.",
+                editUserId = "USER1",
+            )
 
-            @Test
-            fun `can edit question by questioner`() {
-                val command = QuestionEditCommand(
-                    questionId = "QUESTION1",
-                    title = "how install Apache Maven 3",
-                    subject = "I want to install Apache Maven.",
-                    editUserId = "USER1",
-                )
+            // execute
+            questionApplicationService.editQuestion(command)
 
-                // execute
-                questionApplicationService.editQuestion(command)
-
-                // verify
-                inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
-                    assertThat(it).isNotNull
-                    assertThat(it?.title).isEqualTo("how install Apache Maven 3")
-                    assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
-                    assertThat(it?.questioner).isEqualTo(UserId("USER1"))
-                    assertThat(it?.status).isEqualTo(OPENED)
-                }
+            // verify
+            inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
+                assertThat(it).isNotNull
+                assertThat(it?.title).isEqualTo("how install Apache Maven 3")
+                assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
+                assertThat(it?.questioner).isEqualTo(UserId("USER1"))
+                assertThat(it?.status).isEqualTo(OPENED)
             }
+        }
 
-            @Test
-            fun `cannot edit question by other user`() {
-                // setup
-                inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+        @Test
+        fun `cannot edit question by other user`() {
+            // setup
+            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
 
-                val command = QuestionEditCommand(
-                    questionId = "QUESTION1",
-                    title = "how install Apache Maven 3",
-                    subject = "I want to install Apache Maven.",
-                    editUserId = "USER2",
-                )
+            val command = QuestionEditCommand(
+                questionId = "QUESTION1",
+                title = "how install Apache Maven 3",
+                subject = "I want to install Apache Maven.",
+                editUserId = "USER2",
+            )
 
-                // execute & verify
-                assertThatThrownBy { questionApplicationService.editQuestion(command) }
-                    .isExactlyInstanceOf(NotAllowedEditQuestionException::class.java)
-            }
-
+            // execute & verify
+            assertThatThrownBy { questionApplicationService.editQuestion(command) }
+                .isExactlyInstanceOf(NotAllowedEditQuestionException::class.java)
         }
 
         @Test

@@ -70,7 +70,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
     }
 
     @Nested
-    inner class EditQuestion {
+    inner class AlreadyQuestionCreated {
 
         @BeforeEach
         fun beforeEach() {
@@ -86,40 +86,45 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             )
         }
 
-        @Test
-        fun `can edit question by questioner`() {
-            val command = QuestionEditCommand(
-                questionId = "QUESTION1",
-                title = "how install Apache Maven 3",
-                subject = "I want to install Apache Maven.",
-                editUserId = "USER1",
-            )
+        @Nested
+        inner class EditQuestion {
 
-            // execute
-            questionApplicationService.editQuestion(command)
+            @Test
+            fun `can edit question by questioner`() {
+                val command = QuestionEditCommand(
+                    questionId = "QUESTION1",
+                    title = "how install Apache Maven 3",
+                    subject = "I want to install Apache Maven.",
+                    editUserId = "USER1",
+                )
 
-            // verify
-            inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
-                assertThat(it).isNotNull
-                assertThat(it?.title).isEqualTo("how install Apache Maven 3")
-                assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
-                assertThat(it?.questioner).isEqualTo(UserId("USER1"))
-                assertThat(it?.status).isEqualTo(OPENED)
+                // execute
+                questionApplicationService.editQuestion(command)
+
+                // verify
+                inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
+                    assertThat(it).isNotNull
+                    assertThat(it?.title).isEqualTo("how install Apache Maven 3")
+                    assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
+                    assertThat(it?.questioner).isEqualTo(UserId("USER1"))
+                    assertThat(it?.status).isEqualTo(OPENED)
+                }
             }
-        }
 
-        @Test
-        fun `cannot edit question by other user`() {
-            val command = QuestionEditCommand(
-                questionId = "QUESTION1",
-                title = "how install Apache Maven 3",
-                subject = "I want to install Apache Maven.",
-                editUserId = "USER2",
-            )
+            @Test
+            fun `cannot edit question by other user`() {
+                val command = QuestionEditCommand(
+                    questionId = "QUESTION1",
+                    title = "how install Apache Maven 3",
+                    subject = "I want to install Apache Maven.",
+                    editUserId = "USER2",
+                )
 
-            // execute & verify
-            assertThatThrownBy { questionApplicationService.editQuestion(command) }
-                .isExactlyInstanceOf(NotAllowedEditQuestionException::class.java)
+                // execute & verify
+                assertThatThrownBy { questionApplicationService.editQuestion(command) }
+                    .isExactlyInstanceOf(NotAllowedEditQuestionException::class.java)
+            }
+
         }
 
     }

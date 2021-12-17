@@ -70,11 +70,10 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
     }
 
     @Nested
-    inner class EditQuestion {
+    inner class AlreadyQuestionCreated {
 
         @BeforeEach
         fun beforeEach() {
-            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
             inMemoryQuestionRepository().save(
                 Question(
                     id = QuestionId("QUESTION1"),
@@ -88,6 +87,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
         @Test
         fun `can edit question by questioner`() {
+            // setup
             val command = QuestionEditCommand(
                 questionId = "QUESTION1",
                 title = "how install Apache Maven 3",
@@ -110,6 +110,9 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
         @Test
         fun `cannot edit question by other user`() {
+            // setup
+            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+
             val command = QuestionEditCommand(
                 questionId = "QUESTION1",
                 title = "how install Apache Maven 3",
@@ -122,27 +125,18 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
                 .isExactlyInstanceOf(NotAllowedEditQuestionException::class.java)
         }
 
-    }
+        @Test
+        fun `user can close question`() {
+            // execute
+            questionApplicationService.closeQuestion("QUESTION1")
 
-    @Test
-    fun `user can close question`() {
-        // setup
-        // create new question
-        val newQuestionId = questionApplicationService.newQuestion(
-            QuestionNewCommand(
-                title = "how install Apache Maven ?",
-                subject = "I want to install Apache Maven.",
-                questionerUserId = "USER1",
-            )
-        )
+            // verify
+            inMemoryQuestionRepository().entities[QuestionId("QUESTION1")].let {
+                assertThat(it?.status).isEqualTo(CLOSED)
+            }
 
-        // execute
-        questionApplicationService.closeQuestion(newQuestionId.rawId)
-
-        // verify
-        inMemoryQuestionRepository().entities[newQuestionId].let {
-            assertThat(it?.status).isEqualTo(CLOSED)
         }
+
     }
 
 }

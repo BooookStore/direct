@@ -74,7 +74,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
         @BeforeEach
         fun beforeEach() {
-            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
             inMemoryQuestionRepository().save(
                 Question(
                     id = QuestionId("QUESTION1"),
@@ -113,6 +112,9 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
             @Test
             fun `cannot edit question by other user`() {
+                // setup
+                inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+
                 val command = QuestionEditCommand(
                     questionId = "QUESTION1",
                     title = "how install Apache Maven 3",

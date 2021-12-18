@@ -2,6 +2,7 @@ package org.direct.applicationservice
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.direct.domain.question.NotAllowedCloseQuestionException
 import org.direct.domain.question.NotAllowedEditQuestionException
 import org.direct.domain.question.Question
 import org.direct.domain.question.QuestionId
@@ -126,7 +127,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         }
 
         @Test
-        fun `user can close question`() {
+        fun `can close question by questioner`() {
             // setup
             val command = QuestionCloseCommand(
                 questionId = "QUESTION1",
@@ -140,7 +141,21 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             inMemoryQuestionRepository().entities[QuestionId("QUESTION1")].let {
                 assertThat(it?.status).isEqualTo(CLOSED)
             }
+        }
 
+        @Test
+        fun `cannot close question by other user`() {
+            // setup
+            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+
+            val command = QuestionCloseCommand(
+                questionId = "QUESTION1",
+                closeUserId = "USER2",
+            )
+
+            // execute & verify
+            assertThatThrownBy { questionApplicationService.closeQuestion(command) }
+                .isExactlyInstanceOf(NotAllowedCloseQuestionException::class.java)
         }
 
     }

@@ -6,6 +6,4 @@ interface QuestionRepository {
 
     fun findById(questionId: QuestionId): Question?
 
-    fun exist(questionId: QuestionId): Boolean = findById(questionId) != null
-
 }

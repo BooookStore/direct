@@ -1,4 +1,4 @@
-name: CI
+name: maven test
 
 on:
   push:
@@ -33,12 +33,3 @@ jobs:
 
       - name: test
         run: mvn test
-
-  qodana:
-    runs-on: ubuntu-latest
-
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-
-      - uses: JetBrains/qodana-action@v4.0.0

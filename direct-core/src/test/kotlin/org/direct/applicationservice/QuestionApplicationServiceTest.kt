@@ -65,7 +65,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
             // execute & verify
             assertThatThrownBy { questionApplicationService.newQuestion(command) }
-                .isExactlyInstanceOf(IllegalArgumentException::class.java)
+                .isExactlyInstanceOf(IllegalCommandException::class.java)
         }
 
     }
@@ -123,7 +123,8 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
             // execute & verify
             assertThatThrownBy { questionApplicationService.editQuestion(command) }
-                .isExactlyInstanceOf(NotAllowedEditQuestionException::class.java)
+                .isExactlyInstanceOf(IllegalCommandException::class.java)
+                .hasCauseInstanceOf(NotAllowedEditQuestionException::class.java)
         }
 
         @Test
@@ -155,7 +156,8 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
             // execute & verify
             assertThatThrownBy { questionApplicationService.closeQuestion(command) }
-                .isExactlyInstanceOf(NotAllowedCloseQuestionException::class.java)
+                .isExactlyInstanceOf(IllegalCommandException::class.java)
+                .hasCauseInstanceOf(NotAllowedCloseQuestionException::class.java)
         }
 
     }

@@ -38,7 +38,8 @@ class QuestionApplicationService(
         val editUser = userRepository.findById(UserId(command.editUserId))
             ?: throw EntityNotFoundException("user not found : $command.editUserId")
 
-        if ((editUser canEdit question).not()) throw NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.questionId}")
+        if ((editUser canEdit question).not())
+            throw IllegalCommandException(NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.questionId}"))
 
         question.editTitle(command.title)
         question.editSubject(command.subject)
@@ -54,7 +55,8 @@ class QuestionApplicationService(
         val closeUser = userRepository.findById(UserId(command.closeUserId))
             ?: throw EntityNotFoundException("user not found : ${command.closeUserId}")
 
-        if ((closeUser canClose question).not()) throw NotAllowedCloseQuestionException("user ${command.closeUserId} not allowed close ${command.questionId}")
+        if ((closeUser canClose question).not())
+            throw IllegalCommandException(NotAllowedCloseQuestionException("user ${command.closeUserId} not allowed close ${command.questionId}"))
 
         question.close()
         questionRepository.save(question)
@@ -76,12 +78,12 @@ class QuestionApplicationService(
 
     private fun String.assertUserExist() {
         if (userRepository.exist(UserId(this)).not())
-            throw IllegalArgumentException("user not exist : $this")
+            throw IllegalCommandException(IllegalArgumentException("user not exist : $this"))
     }
 
     private fun String.assertQuestionExist() {
         if (questionRepository.exist(QuestionId(this)).not())
-            throw IllegalArgumentException("question not exist : $this")
+            throw IllegalCommandException(IllegalArgumentException("question not exist : $this"))
     }
 
 }

@@ -127,8 +127,14 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
         @Test
         fun `user can close question`() {
+            // setup
+            val command = QuestionCloseCommand(
+                questionId = "QUESTION1",
+                closeUserId = "USER1",
+            )
+
             // execute
-            questionApplicationService.closeQuestion("QUESTION1")
+            questionApplicationService.closeQuestion(command)
 
             // verify
             inMemoryQuestionRepository().entities[QuestionId("QUESTION1")].let {

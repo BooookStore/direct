@@ -44,9 +44,13 @@ class QuestionApplicationService(
         questionRepository.save(question)
     }
 
-    fun closeQuestion(questionId: String) {
-        val question = questionRepository.findById(QuestionId(questionId))
-            ?: throw EntityNotFoundException("question not found : $questionId")
+    fun closeQuestion(command: QuestionCloseCommand) {
+        command.questionId.assertQuestionExist()
+        command.closeUserId.assertUserExist()
+
+        val question = questionRepository.findById(QuestionId(command.questionId))
+            ?: throw EntityNotFoundException("question not found : $command.questionId")
+
         question.close()
         questionRepository.save(question)
     }

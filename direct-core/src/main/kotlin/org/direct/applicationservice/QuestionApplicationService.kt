@@ -4,6 +4,7 @@ package org.direct.applicationservice
 
 import org.direct.domain.exception.EntityNotFoundException
 import org.direct.domain.question.*
+import org.direct.domain.question.QuestionClosePolicy.canClose
 import org.direct.domain.question.QuestionEditPolicy.canEdit
 import org.direct.domain.user.UserId
 import org.direct.domain.user.UserRepository
@@ -49,7 +50,11 @@ class QuestionApplicationService(
         command.closeUserId.assertUserExist()
 
         val question = questionRepository.findById(QuestionId(command.questionId))
-            ?: throw EntityNotFoundException("question not found : $command.questionId")
+            ?: throw EntityNotFoundException("question not found : ${command.questionId}")
+        val closeUser = userRepository.findById(UserId(command.closeUserId))
+            ?: throw EntityNotFoundException("user not found : ${command.closeUserId}")
+
+        if ((closeUser canClose question).not()) throw NotAllowedCloseQuestionException("user ${command.closeUserId} not allowed close ${command.questionId}")
 
         question.close()
         questionRepository.save(question)

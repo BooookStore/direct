@@ -46,9 +46,9 @@ class QuestionApplicationService(
 
     fun closeQuestion(command: QuestionCloseCommand) {
         val question = questionRepository.findById(QuestionId(command.questionId))
-            ?: throw EntityNotFoundException("question not found : ${command.questionId}")
+            ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${command.questionId}"))
         val closeUser = userRepository.findById(UserId(command.closeUserId))
-            ?: throw EntityNotFoundException("user not found : ${command.closeUserId}")
+            ?: throw IllegalCommandException(EntityNotFoundException("user not found : ${command.closeUserId}"))
 
         if ((closeUser canClose question).not())
             throw IllegalCommandException(NotAllowedCloseQuestionException("user ${command.closeUserId} not allowed close ${command.questionId}"))

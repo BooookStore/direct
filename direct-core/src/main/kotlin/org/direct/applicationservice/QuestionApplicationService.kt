@@ -16,7 +16,8 @@ class QuestionApplicationService(
 ) {
 
     fun newQuestion(command: QuestionNewCommand): QuestionId {
-        command.questionerUserId.assertUserExist()
+        if (userRepository.exist(UserId(command.questionerUserId)).not())
+            throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
 
         val newQuestionId = questionIdentityGenerator.generateIdentity()
         val newQuestion = Question.new(
@@ -30,13 +31,10 @@ class QuestionApplicationService(
     }
 
     fun editQuestion(command: QuestionEditCommand) {
-        command.questionId.assertQuestionExist()
-        command.editUserId.assertUserExist()
-
         val question = questionRepository.findById(QuestionId(command.questionId))
-            ?: throw EntityNotFoundException("question not found : $command.id")
+            ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${command.questionId}"))
         val editUser = userRepository.findById(UserId(command.editUserId))
-            ?: throw EntityNotFoundException("user not found : $command.editUserId")
+            ?: throw IllegalCommandException(EntityNotFoundException("user not found : ${command.editUserId}"))
 
         if ((editUser canEdit question).not())
             throw IllegalCommandException(NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.questionId}"))
@@ -47,9 +45,6 @@ class QuestionApplicationService(
     }
 
     fun closeQuestion(command: QuestionCloseCommand) {
-        command.questionId.assertQuestionExist()
-        command.closeUserId.assertUserExist()
-
         val question = questionRepository.findById(QuestionId(command.questionId))
             ?: throw EntityNotFoundException("question not found : ${command.questionId}")
         val closeUser = userRepository.findById(UserId(command.closeUserId))
@@ -74,16 +69,6 @@ class QuestionApplicationService(
             ?: throw EntityNotFoundException("question not found : $questionId")
         question.delete()
         questionRepository.save(question)
-    }
-
-    private fun String.assertUserExist() {
-        if (userRepository.exist(UserId(this)).not())
-            throw IllegalCommandException(IllegalArgumentException("user not exist : $this"))
-    }
-
-    private fun String.assertQuestionExist() {
-        if (questionRepository.exist(QuestionId(this)).not())
-            throw IllegalCommandException(IllegalArgumentException("question not exist : $this"))
     }
 
 }

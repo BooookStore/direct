@@ -16,7 +16,8 @@ class QuestionApplicationService(
 ) {
 
     fun newQuestion(command: QuestionNewCommand): QuestionId {
-        command.questionerUserId.assertUserExist()
+        if (userRepository.exist(UserId(command.questionerUserId)).not())
+            throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
 
         val newQuestionId = questionIdentityGenerator.generateIdentity()
         val newQuestion = Question.new(
@@ -30,15 +31,13 @@ class QuestionApplicationService(
     }
 
     fun editQuestion(command: QuestionEditCommand) {
-        command.questionId.assertQuestionExist()
-        command.editUserId.assertUserExist()
-
         val question = questionRepository.findById(QuestionId(command.questionId))
-            ?: throw EntityNotFoundException("question not found : $command.id")
+            ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${command.questionId}"))
         val editUser = userRepository.findById(UserId(command.editUserId))
-            ?: throw EntityNotFoundException("user not found : $command.editUserId")
+            ?: throw IllegalCommandException(EntityNotFoundException("user not found : ${command.editUserId}"))
 
-        if ((editUser canEdit question).not()) throw NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.questionId}")
+        if ((editUser canEdit question).not())
+            throw IllegalCommandException(NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.questionId}"))
 
         question.editTitle(command.title)
         question.editSubject(command.subject)
@@ -46,15 +45,13 @@ class QuestionApplicationService(
     }
 
     fun closeQuestion(command: QuestionCloseCommand) {
-        command.questionId.assertQuestionExist()
-        command.closeUserId.assertUserExist()
-
         val question = questionRepository.findById(QuestionId(command.questionId))
             ?: throw EntityNotFoundException("question not found : ${command.questionId}")
         val closeUser = userRepository.findById(UserId(command.closeUserId))
             ?: throw EntityNotFoundException("user not found : ${command.closeUserId}")
 
-        if ((closeUser canClose question).not()) throw NotAllowedCloseQuestionException("user ${command.closeUserId} not allowed close ${command.questionId}")
+        if ((closeUser canClose question).not())
+            throw IllegalCommandException(NotAllowedCloseQuestionException("user ${command.closeUserId} not allowed close ${command.questionId}"))
 
         question.close()
         questionRepository.save(question)
@@ -72,16 +69,6 @@ class QuestionApplicationService(
             ?: throw EntityNotFoundException("question not found : $questionId")
         question.delete()
         questionRepository.save(question)
-    }
-
-    private fun String.assertUserExist() {
-        if (userRepository.exist(UserId(this)).not())
-            throw IllegalArgumentException("user not exist : $this")
-    }
-
-    private fun String.assertQuestionExist() {
-        if (questionRepository.exist(QuestionId(this)).not())
-            throw IllegalArgumentException("question not exist : $this")
     }
 
 }

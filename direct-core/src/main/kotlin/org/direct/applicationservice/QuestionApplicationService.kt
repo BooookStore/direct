@@ -89,3 +89,8 @@ data class QuestionEditCommand(
     val subject: String,
     val editUserId: String,
 )
+
+data class QuestionCloseCommand(
+    val questionId: String,
+    val closeUserId: String,
+)

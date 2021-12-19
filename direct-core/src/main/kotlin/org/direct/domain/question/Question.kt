@@ -11,6 +11,7 @@ class Question(
     subject: String,
     val questioner: UserId,
     visibility: QuestionVisibility,
+    resolved: Boolean,
 ) {
 
     companion object {
@@ -20,7 +21,8 @@ class Question(
             title = title,
             subject = subject,
             questioner = questioner,
-            visibility = PUBLIC
+            visibility = PUBLIC,
+            resolved = false,
         )
 
     }
@@ -32,6 +34,9 @@ class Question(
         private set
 
     var visibility: QuestionVisibility = visibility
+        private set
+
+    var resolved: Boolean = resolved
         private set
 
     fun editTitle(newTitle: String) {

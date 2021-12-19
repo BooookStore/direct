@@ -79,7 +79,8 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
                     title = "how install Apache Maven ?",
                     subject = "I want to install Apache Maven.",
                     questioner = UserId("USER1"),
-                    visibility = PUBLIC
+                    visibility = PUBLIC,
+                    resolved = false,
                 )
             )
         }

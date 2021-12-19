@@ -1,7 +1,7 @@
 package org.direct.domain.question
 
 import org.assertj.core.api.Assertions.assertThat
-import org.direct.domain.question.QuestionStatus.*
+import org.direct.domain.question.QuestionVisibility.*
 import org.direct.domain.user.UserId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -13,7 +13,7 @@ internal class QuestionTest {
     @BeforeEach
     fun beforeAll() {
         // create Question
-        question = Question.new(
+        question = Question.newPublic(
             id = QuestionId("123-456-789"),
             title = "TITLE",
             subject = "SUBJECT",
@@ -24,13 +24,13 @@ internal class QuestionTest {
     @Test
     fun transitStatus() {
         // verify for initial status
-        assertThat(question.status).isEqualTo(OPENED)
+        assertThat(question.visibility).isEqualTo(PUBLIC)
 
         // execute
-        question.close()
+        question.delete()
 
         // verify
-        assertThat(question.status).isEqualTo(CLOSED)
+        assertThat(question.visibility).isEqualTo(DELETED)
     }
 
 }

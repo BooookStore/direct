@@ -4,7 +4,6 @@ package org.direct.applicationservice
 
 import org.direct.domain.exception.EntityNotFoundException
 import org.direct.domain.question.*
-import org.direct.domain.question.QuestionClosePolicy.canClose
 import org.direct.domain.question.QuestionEditPolicy.canEdit
 import org.direct.domain.user.UserId
 import org.direct.domain.user.UserRepository
@@ -20,7 +19,7 @@ class QuestionApplicationService(
             throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
 
         val newQuestionId = questionIdentityGenerator.generateIdentity()
-        val newQuestion = Question.new(
+        val newQuestion = Question.newPublic(
             id = newQuestionId,
             title = command.title,
             subject = command.subject,
@@ -44,23 +43,10 @@ class QuestionApplicationService(
         questionRepository.save(question)
     }
 
-    fun closeQuestion(command: QuestionCloseCommand) {
-        val question = questionRepository.findById(QuestionId(command.questionId))
-            ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${command.questionId}"))
-        val closeUser = userRepository.findById(UserId(command.closeUserId))
-            ?: throw IllegalCommandException(EntityNotFoundException("user not found : ${command.closeUserId}"))
-
-        if ((closeUser canClose question).not())
-            throw IllegalCommandException(NotAllowedCloseQuestionException("user ${command.closeUserId} not allowed close ${command.questionId}"))
-
-        question.close()
-        questionRepository.save(question)
-    }
-
-    fun reOpenQuestion(questionId: String) {
+    fun publicQuestion(questionId: String) {
         val question = questionRepository.findById(QuestionId(questionId))
             ?: throw EntityNotFoundException("question not found : $questionId")
-        question.reOpen()
+        question.public()
         questionRepository.save(question)
     }
 
@@ -84,9 +70,4 @@ data class QuestionEditCommand(
     val title: String,
     val subject: String,
     val editUserId: String,
-)
-
-data class QuestionCloseCommand(
-    val questionId: String,
-    val closeUserId: String,
 )

@@ -13,7 +13,8 @@ class InMemoryQuestionRepository : QuestionRepository {
         title = this.title,
         subject = this.subject,
         questioner = this.questioner,
-        status = this.status
+        visibility = this.visibility,
+        resolved = this.resolved,
     )
 
     override fun save(question: Question) {

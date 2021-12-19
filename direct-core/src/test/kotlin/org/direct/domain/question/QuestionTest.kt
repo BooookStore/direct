@@ -13,7 +13,7 @@ internal class QuestionTest {
     @BeforeEach
     fun beforeAll() {
         // create Question
-        question = Question.new(
+        question = Question.newPublic(
             id = QuestionId("123-456-789"),
             title = "TITLE",
             subject = "SUBJECT",
@@ -24,13 +24,13 @@ internal class QuestionTest {
     @Test
     fun transitStatus() {
         // verify for initial status
-        assertThat(question.status).isEqualTo(OPENED)
+        assertThat(question.visibility).isEqualTo(PUBLIC)
 
         // execute
-        question.close()
+        question.delete()
 
         // verify
-        assertThat(question.status).isEqualTo(CLOSED)
+        assertThat(question.visibility).isEqualTo(DELETED)
     }
 
 }

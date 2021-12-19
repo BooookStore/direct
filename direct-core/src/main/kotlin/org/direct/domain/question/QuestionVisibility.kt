@@ -1,22 +1,17 @@
 package org.direct.domain.question
 
 enum class QuestionVisibility {
-    OPENED,
-    CLOSED,
+    BEFORE_PUBLIC,
+    PUBLIC,
     DELETED;
 
-    fun reOpen(): QuestionVisibility = when (this) {
-        CLOSED -> OPENED
-        OPENED, DELETED -> throw IllegalQuestionStatusTransitionException()
-    }
-
-    fun close(): QuestionVisibility = when (this) {
-        OPENED -> CLOSED
-        CLOSED, DELETED -> throw IllegalQuestionStatusTransitionException()
+    fun public(): QuestionVisibility = when (this) {
+        BEFORE_PUBLIC -> PUBLIC
+        PUBLIC, DELETED -> throw IllegalQuestionStatusTransitionException()
     }
 
     fun delete(): QuestionVisibility = when (this) {
-        OPENED, CLOSED -> DELETED
+        BEFORE_PUBLIC, PUBLIC -> DELETED
         DELETED -> throw IllegalQuestionStatusTransitionException()
     }
 

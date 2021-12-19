@@ -2,12 +2,10 @@ package org.direct.applicationservice
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.direct.domain.question.NotAllowedCloseQuestionException
 import org.direct.domain.question.NotAllowedEditQuestionException
 import org.direct.domain.question.Question
 import org.direct.domain.question.QuestionId
-import org.direct.domain.question.QuestionVisibility.CLOSED
-import org.direct.domain.question.QuestionVisibility.OPENED
+import org.direct.domain.question.QuestionVisibility.PUBLIC
 import org.direct.domain.user.User
 import org.direct.domain.user.UserCategory.NORMAL
 import org.direct.domain.user.UserId
@@ -81,7 +79,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
                     title = "how install Apache Maven ?",
                     subject = "I want to install Apache Maven.",
                     questioner = UserId("USER1"),
-                    status = OPENED
+                    visibility = PUBLIC
                 )
             )
         }
@@ -105,7 +103,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
                 assertThat(it?.title).isEqualTo("how install Apache Maven 3")
                 assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
                 assertThat(it?.questioner).isEqualTo(UserId("USER1"))
-                assertThat(it?.status).isEqualTo(OPENED)
+                assertThat(it?.visibility).isEqualTo(PUBLIC)
             }
         }
 
@@ -125,39 +123,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             assertThatThrownBy { questionApplicationService.editQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
                 .hasCauseInstanceOf(NotAllowedEditQuestionException::class.java)
-        }
-
-        @Test
-        fun `can close question by questioner`() {
-            // setup
-            val command = QuestionCloseCommand(
-                questionId = "QUESTION1",
-                closeUserId = "USER1",
-            )
-
-            // execute
-            questionApplicationService.closeQuestion(command)
-
-            // verify
-            inMemoryQuestionRepository().entities[QuestionId("QUESTION1")].let {
-                assertThat(it?.status).isEqualTo(CLOSED)
-            }
-        }
-
-        @Test
-        fun `cannot close question by other user`() {
-            // setup
-            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
-
-            val command = QuestionCloseCommand(
-                questionId = "QUESTION1",
-                closeUserId = "USER2",
-            )
-
-            // execute & verify
-            assertThatThrownBy { questionApplicationService.closeQuestion(command) }
-                .isExactlyInstanceOf(IllegalCommandException::class.java)
-                .hasCauseInstanceOf(NotAllowedCloseQuestionException::class.java)
         }
 
     }

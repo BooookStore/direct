@@ -2,6 +2,7 @@
 
 package org.direct.domain.question
 
+import org.direct.domain.question.QuestionVisibility.PUBLIC
 import org.direct.domain.user.UserId
 
 class Question(
@@ -9,17 +10,17 @@ class Question(
     title: String,
     subject: String,
     val questioner: UserId,
-    status: QuestionVisibility,
+    visibility: QuestionVisibility,
 ) {
 
     companion object {
 
-        fun new(id: QuestionId, title: String, subject: String, questioner: UserId): Question = Question(
+        fun newPublic(id: QuestionId, title: String, subject: String, questioner: UserId): Question = Question(
             id = id,
             title = title,
             subject = subject,
             questioner = questioner,
-            status = QuestionVisibility.OPENED,
+            visibility = PUBLIC
         )
 
     }
@@ -30,7 +31,7 @@ class Question(
     var subject: String = subject
         private set
 
-    var status: QuestionVisibility = status
+    var visibility: QuestionVisibility = visibility
         private set
 
     fun editTitle(newTitle: String) {
@@ -41,16 +42,12 @@ class Question(
         subject = newSubject
     }
 
-    fun reOpen() {
-        status = status.reOpen()
-    }
-
-    fun close() {
-        status = status.close()
+    fun public() {
+        visibility = visibility.public()
     }
 
     fun delete() {
-        status = status.delete()
+        visibility = visibility.delete()
     }
 
     fun isIdentifiedBy(otherQuestion: Question): Boolean {
@@ -58,7 +55,7 @@ class Question(
     }
 
     override fun toString(): String {
-        return "Question(id=$id, questioner=$questioner, title='$title', subject='$subject', status=$status)"
+        return "Question(id=$id, questioner=$questioner, title='$title', subject='$subject', status=$visibility)"
     }
 
 }

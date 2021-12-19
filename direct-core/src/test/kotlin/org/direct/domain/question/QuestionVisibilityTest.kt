@@ -8,29 +8,20 @@ import org.junit.jupiter.api.assertThrows
 internal class QuestionVisibilityTest {
 
     @Test
-    fun open() {
-        assertThat(CLOSED.reOpen()).isEqualTo(OPENED)
-            .withFailMessage("can transit closed to opened")
+    fun public() {
+        assertThat(BEFORE_PUBLIC.public()).isEqualTo(PUBLIC)
+            .withFailMessage("can transit before_public to public")
 
-        assertThrows<IllegalQuestionStatusTransitionException>("can't opened to opened") { OPENED.reOpen() }
-        assertThrows<IllegalQuestionStatusTransitionException>("can't deleted to opened") { DELETED.reOpen() }
-    }
-
-    @Test
-    fun close() {
-        assertThat(OPENED.close()).isEqualTo(CLOSED)
-            .withFailMessage("can opened to closed")
-
-        assertThrows<IllegalQuestionStatusTransitionException>("can't closed to closed") { CLOSED.close() }
-        assertThrows<IllegalQuestionStatusTransitionException>("can't deleted to closed") { DELETED.close() }
+        assertThrows<IllegalQuestionStatusTransitionException>("can't public to public") { PUBLIC.public() }
+        assertThrows<IllegalQuestionStatusTransitionException>("can't deleted to public") { DELETED.public() }
     }
 
     @Test
     fun delete() {
-        assertThat(OPENED.delete()).isEqualTo(DELETED)
-            .withFailMessage("can opened to deleted")
-        assertThat(CLOSED.delete()).isEqualTo(DELETED)
-            .withFailMessage("can closed to deleted")
+        assertThat(BEFORE_PUBLIC.delete()).isEqualTo(DELETED)
+            .withFailMessage("can before_public to deleted")
+        assertThat(PUBLIC.delete()).isEqualTo(DELETED)
+            .withFailMessage("can public to deleted")
 
         assertThrows<IllegalQuestionStatusTransitionException>("can't deleted to deleted") { DELETED.delete() }
     }

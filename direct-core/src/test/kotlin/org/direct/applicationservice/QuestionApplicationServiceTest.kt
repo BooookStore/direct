@@ -6,8 +6,8 @@ import org.direct.domain.question.NotAllowedCloseQuestionException
 import org.direct.domain.question.NotAllowedEditQuestionException
 import org.direct.domain.question.Question
 import org.direct.domain.question.QuestionId
-import org.direct.domain.question.QuestionStatus.CLOSED
-import org.direct.domain.question.QuestionStatus.OPENED
+import org.direct.domain.question.QuestionVisibility.CLOSED
+import org.direct.domain.question.QuestionVisibility.OPENED
 import org.direct.domain.user.User
 import org.direct.domain.user.UserCategory.NORMAL
 import org.direct.domain.user.UserId

@@ -9,7 +9,7 @@ class Question(
     title: String,
     subject: String,
     val questioner: UserId,
-    status: QuestionStatus,
+    status: QuestionVisibility,
 ) {
 
     companion object {
@@ -19,7 +19,7 @@ class Question(
             title = title,
             subject = subject,
             questioner = questioner,
-            status = QuestionStatus.OPENED,
+            status = QuestionVisibility.OPENED,
         )
 
     }
@@ -30,7 +30,7 @@ class Question(
     var subject: String = subject
         private set
 
-    var status: QuestionStatus = status
+    var status: QuestionVisibility = status
         private set
 
     fun editTitle(newTitle: String) {

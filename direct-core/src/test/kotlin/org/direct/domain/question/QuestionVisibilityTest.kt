@@ -1,11 +1,11 @@
 package org.direct.domain.question
 
 import org.assertj.core.api.Assertions.assertThat
-import org.direct.domain.question.QuestionStatus.*
+import org.direct.domain.question.QuestionVisibility.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-internal class QuestionStatusTest {
+internal class QuestionVisibilityTest {
 
     @Test
     fun open() {

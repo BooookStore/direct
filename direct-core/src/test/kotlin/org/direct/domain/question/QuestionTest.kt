@@ -1,7 +1,7 @@
 package org.direct.domain.question
 
 import org.assertj.core.api.Assertions.assertThat
-import org.direct.domain.question.QuestionStatus.*
+import org.direct.domain.question.QuestionVisibility.*
 import org.direct.domain.user.UserId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

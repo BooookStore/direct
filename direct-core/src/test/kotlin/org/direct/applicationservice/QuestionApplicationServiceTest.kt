@@ -1,3 +1,5 @@
+@file:Suppress("ClassName")
+
 package org.direct.applicationservice
 
 import org.assertj.core.api.Assertions.assertThat
@@ -69,7 +71,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
     }
 
     @Nested
-    inner class AlreadyQuestionCreated {
+    inner class `already exist question which public and unresolved` {
 
         @BeforeEach
         fun beforeEach() {

@@ -16,5 +16,3 @@ enum class QuestionVisibility {
     }
 
 }
-
-class IllegalQuestionStatusTransitionException : Exception()

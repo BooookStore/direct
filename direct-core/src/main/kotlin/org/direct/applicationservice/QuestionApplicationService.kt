@@ -43,10 +43,19 @@ class QuestionApplicationService(
         questionRepository.save(question)
     }
 
-    fun publicQuestion(questionId: String) {
-        val question = questionRepository.findById(QuestionId(questionId))
-            ?: throw EntityNotFoundException("question not found : $questionId")
-        question.public()
+    fun publicQuestion(command: QuestionPublicCommand) {
+        if (userRepository.exist(UserId(command.operateUserId)).not())
+            throw IllegalCommandException(EntityNotFoundException("user not found : ${command.operateUserId}"))
+
+        val question = questionRepository.findById(QuestionId(command.questionId))
+            ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${command.questionId}"))
+
+        try {
+            question.public()
+        } catch (cause: IllegalQuestionVisibilityTransitionException) {
+            throw IllegalCommandException(cause)
+        }
+
         questionRepository.save(question)
     }
 
@@ -74,5 +83,5 @@ data class QuestionEditCommand(
 
 data class QuestionPublicCommand(
     val questionId: String,
-    val operateUserId: UserId,
+    val operateUserId: String,
 )

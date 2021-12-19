@@ -71,3 +71,8 @@ data class QuestionEditCommand(
     val subject: String,
     val editUserId: String,
 )
+
+data class QuestionPublicCommand(
+    val questionId: String,
+    val operateUserId: UserId,
+)

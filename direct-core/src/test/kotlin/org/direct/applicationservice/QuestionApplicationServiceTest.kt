@@ -4,9 +4,8 @@ package org.direct.applicationservice
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.direct.domain.question.NotAllowedEditQuestionException
-import org.direct.domain.question.Question
-import org.direct.domain.question.QuestionId
+import org.direct.domain.question.*
+import org.direct.domain.question.QuestionVisibility.BEFORE_PUBLIC
 import org.direct.domain.question.QuestionVisibility.PUBLIC
 import org.direct.domain.user.User
 import org.direct.domain.user.UserCategory.NORMAL
@@ -126,6 +125,59 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             assertThatThrownBy { questionApplicationService.editQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
                 .hasCauseInstanceOf(NotAllowedEditQuestionException::class.java)
+        }
+
+    }
+
+    @Nested
+    inner class `already exist question which before public and unresolved` {
+
+        @BeforeEach
+        fun beforeEach() {
+            inMemoryQuestionRepository().save(
+                Question(
+                    id = QuestionId("QUESTION1"),
+                    title = "how install Apache Maven ?",
+                    subject = "I want to install Apache Maven.",
+                    questioner = UserId("USER1"),
+                    visibility = BEFORE_PUBLIC,
+                    resolved = false,
+                )
+            )
+        }
+
+        @Test
+        fun `can public question by questioner`() {
+            // setup
+            val command = QuestionPublicCommand(
+                questionId = "QUESTION1",
+                operateUserId = "USER1",
+            )
+
+            // execute
+            questionApplicationService.publicQuestion(command)
+
+            // verify
+            inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
+                assertThat(it).isNotNull
+                assertThat(it?.visibility).isEqualTo(PUBLIC)
+            }
+        }
+
+        @Test
+        fun `cannot public question by other user`() {
+            // setup
+            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+
+            val command = QuestionPublicCommand(
+                questionId = "QUESTION1",
+                operateUserId = "USER2",
+            )
+
+            // execute & verify
+            assertThatThrownBy { questionApplicationService.publicQuestion(command) }
+                .isExactlyInstanceOf(IllegalCommandException::class.java)
+                .hasCauseInstanceOf(NotAllowedPublicQuestionException::class.java)
         }
 
     }

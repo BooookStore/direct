@@ -5,6 +5,7 @@ package org.direct.applicationservice
 import org.direct.domain.exception.EntityNotFoundException
 import org.direct.domain.question.*
 import org.direct.domain.question.QuestionEditPolicy.canEdit
+import org.direct.domain.question.QuestionPublicPolicy.canPublic
 import org.direct.domain.user.UserId
 import org.direct.domain.user.UserRepository
 
@@ -44,18 +45,15 @@ class QuestionApplicationService(
     }
 
     fun publicQuestion(command: QuestionPublicCommand) {
-        if (userRepository.exist(UserId(command.operateUserId)).not())
-            throw IllegalCommandException(EntityNotFoundException("user not found : ${command.operateUserId}"))
-
+        val operateUser = userRepository.findById(UserId(command.operateUserId))
+            ?: throw IllegalCommandException(EntityNotFoundException("user not found : ${command.operateUserId}"))
         val question = questionRepository.findById(QuestionId(command.questionId))
             ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${command.questionId}"))
 
-        try {
-            question.public()
-        } catch (cause: IllegalQuestionVisibilityTransitionException) {
-            throw IllegalCommandException(cause)
-        }
+        if ((operateUser canPublic question).not())
+            throw IllegalCommandException(NotAllowedPublicQuestionException("user ${command.operateUserId} not allowed public ${command.questionId}"))
 
+        question.public()
         questionRepository.save(question)
     }
 

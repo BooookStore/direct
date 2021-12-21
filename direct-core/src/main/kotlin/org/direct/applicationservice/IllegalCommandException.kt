@@ -1,3 +1,3 @@
 package org.direct.applicationservice
 
-class IllegalCommandException(override val cause: Throwable?) : Throwable(null, cause)
+class IllegalCommandException(cause: Exception) : Throwable(null, cause)

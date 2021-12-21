@@ -12,4 +12,4 @@ object DomainRegistry {
 
 }
 
-class DomainRegistryNotInitializedException : Throwable()
+class DomainRegistryNotInitializedException : Exception()

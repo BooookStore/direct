@@ -1,3 +1,3 @@
 package org.direct.domain.question
 
-class NotAllowedEditQuestionException(override val message: String?) : Throwable(message)
+class NotAllowedEditQuestionException(message: String) : Exception(message)

@@ -12,8 +12,8 @@ internal class QuestionVisibilityTest {
         assertThat(BEFORE_PUBLIC.public()).isEqualTo(PUBLIC)
             .withFailMessage("can transit before_public to public")
 
-        assertThrows<IllegalQuestionStatusTransitionException>("can't public to public") { PUBLIC.public() }
-        assertThrows<IllegalQuestionStatusTransitionException>("can't deleted to public") { DELETED.public() }
+        assertThrows<IllegalQuestionVisibilityTransitionException>("can't public to public") { PUBLIC.public() }
+        assertThrows<IllegalQuestionVisibilityTransitionException>("can't deleted to public") { DELETED.public() }
     }
 
     @Test
@@ -23,7 +23,7 @@ internal class QuestionVisibilityTest {
         assertThat(PUBLIC.delete()).isEqualTo(DELETED)
             .withFailMessage("can public to deleted")
 
-        assertThrows<IllegalQuestionStatusTransitionException>("can't deleted to deleted") { DELETED.delete() }
+        assertThrows<IllegalQuestionVisibilityTransitionException>("can't deleted to deleted") { DELETED.delete() }
     }
 
 }

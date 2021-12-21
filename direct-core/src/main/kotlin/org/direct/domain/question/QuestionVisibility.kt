@@ -7,12 +7,12 @@ enum class QuestionVisibility {
 
     fun public(): QuestionVisibility = when (this) {
         BEFORE_PUBLIC -> PUBLIC
-        PUBLIC, DELETED -> throw IllegalQuestionStatusTransitionException()
+        PUBLIC, DELETED -> throw IllegalQuestionVisibilityTransitionException()
     }
 
     fun delete(): QuestionVisibility = when (this) {
         BEFORE_PUBLIC, PUBLIC -> DELETED
-        DELETED -> throw IllegalQuestionStatusTransitionException()
+        DELETED -> throw IllegalQuestionVisibilityTransitionException()
     }
 
 }

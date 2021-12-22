@@ -1,11 +1,11 @@
 {
   "modules": [
     {
-      "name": "direct",
+      "name": "direct-core",
       "languageLevel": 11
     },
     {
-      "name": "direct-core",
+      "name": "direct",
       "languageLevel": 11
     }
   ]

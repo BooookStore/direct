@@ -1,3 +1,3 @@
 package org.direct.domain.question
 
-class IllegalQuestionVisibilityTransitionException : Exception()
+class IllegalQuestionVisibilityTransitionException(message: String) : Exception(message)

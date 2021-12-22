@@ -22,8 +22,4 @@ class Comment(
         return id == otherComment.id
     }
 
-    override fun toString(): String {
-        return "Comment(id=$id, replyTo=$replyTo, commenter=$commenter, subject='$subject')"
-    }
-
 }

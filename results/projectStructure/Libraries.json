@@ -1,0 +1,76 @@
+{
+  "libraries": [
+    {
+      "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib:1.5.31",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.5.31/kotlin-stdlib-1.5.31.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.jetbrains:annotations:13.0",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.5.31",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.5.31/kotlin-stdlib-common-1.5.31.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.junit.jupiter:junit-jupiter:5.8.1",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter/5.8.1/junit-jupiter-5.8.1.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.junit.jupiter:junit-jupiter-api:5.8.1",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.8.1/junit-jupiter-api-5.8.1.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.opentest4j:opentest4j:1.2.0",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.junit.platform:junit-platform-commons:1.8.1",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-commons/1.8.1/junit-platform-commons-1.8.1.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.apiguardian:apiguardian-api:1.1.2",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.junit.jupiter:junit-jupiter-params:5.8.1",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-params/5.8.1/junit-jupiter-params-5.8.1.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.junit.jupiter:junit-jupiter-engine:5.8.1",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-engine/5.8.1/junit-jupiter-engine-5.8.1.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.junit.platform:junit-platform-engine:1.8.1",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/junit/platform/junit-platform-engine/1.8.1/junit-platform-engine-1.8.1.jar!/"
+      ]
+    },
+    {
+      "name": "Maven: org.assertj:assertj-core:3.21.0",
+      "roots": [
+        "jar://$MAVEN_REPOSITORY$/org/assertj/assertj-core/3.21.0/assertj-core-3.21.0.jar!/"
+      ]
+    }
+  ]
+}

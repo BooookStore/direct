@@ -1,0 +1,15 @@
+{
+  "total": 0,
+  "tools inspection": {
+    "Code Inspection": 0
+  },
+  "attributes": {
+    "vcs": {
+      "sarifIdea": {
+        "repositoryUri": "https://github.com/BooookStore/direct",
+        "revisionId": "3a7beed82efcc70b8eca93015850cc903da4450a",
+        "branch": "feat/uplodad_github_pages"
+      }
+    }
+  }
+}

@@ -23,8 +23,4 @@ class Answer(
         return id == otherAnswer.id
     }
 
-    override fun toString(): String {
-        return "Answer(id=$id, replyTo=$replyTo, answerer=$answerer, subject='$subject')"
-    }
-
 }

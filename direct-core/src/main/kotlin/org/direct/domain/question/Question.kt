@@ -59,8 +59,4 @@ class Question(
         return id == otherQuestion.id
     }
 
-    override fun toString(): String {
-        return "Question(id=$id, questioner=$questioner, title='$title', subject='$subject', status=$visibility)"
-    }
-
 }

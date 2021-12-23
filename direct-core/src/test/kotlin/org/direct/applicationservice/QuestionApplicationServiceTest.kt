@@ -35,14 +35,14 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `user can create new question`() {
             // setup
-            val command = QuestionNewCommand(
+            val command = QuestionNewPublicCommand(
                 title = "how install Apache Maven ?",
                 subject = "I want to install Apache Maven.",
                 questionerUserId = "USER1",
             )
 
             // execute
-            val newQuestionId = questionApplicationService.newQuestion(command)
+            val newQuestionId = questionApplicationService.newPublicQuestion(command)
 
             // verify
             inMemoryQuestionRepository().entities[newQuestionId].let {
@@ -56,14 +56,14 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `can not create new question without user`() {
             // setup
-            val command = QuestionNewCommand(
+            val command = QuestionNewPublicCommand(
                 title = "how install Apache Maven ?",
                 subject = "I want to install Apache Maven.",
                 questionerUserId = "DONT EXIST USER !",
             )
 
             // execute & verify
-            assertThatThrownBy { questionApplicationService.newQuestion(command) }
+            assertThatThrownBy { questionApplicationService.newPublicQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
         }
 

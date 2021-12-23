@@ -16,13 +16,13 @@ class QuestionApplicationService(
     private val userRepository: UserRepository,
 ) {
 
-    data class QuestionNewCommand(
+    data class QuestionNewPublicCommand(
         val title: String,
         val subject: String,
         val questionerUserId: String,
     )
 
-    fun newQuestion(command: QuestionNewCommand): QuestionId {
+    fun newPublicQuestion(command: QuestionNewPublicCommand): QuestionId {
         if (userRepository.exist(UserId(command.questionerUserId)).not())
             throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
 

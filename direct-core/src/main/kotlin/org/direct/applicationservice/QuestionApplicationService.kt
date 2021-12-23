@@ -83,3 +83,8 @@ data class QuestionPublicCommand(
     val questionId: String,
     val operateUserId: String,
 )
+
+data class QuestionDeleteCommand(
+    val questionId: String,
+    val oeprateUserId: String,
+)

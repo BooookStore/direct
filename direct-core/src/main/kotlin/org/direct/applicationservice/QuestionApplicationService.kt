@@ -32,10 +32,8 @@ class QuestionApplicationService(
     }
 
     fun editQuestion(command: QuestionEditCommand) {
-        val question = questionRepository.findById(QuestionId(command.questionId))
-            ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${command.questionId}"))
-        val editUser = userRepository.findById(UserId(command.editUserId))
-            ?: throw IllegalCommandException(EntityNotFoundException("user not found : ${command.editUserId}"))
+        val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
+        val editUser = userRepository.findByIdOrThrow(UserId(command.editUserId))
 
         if ((editUser canEdit question).not())
             throw IllegalCommandException(NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.questionId}"))
@@ -46,10 +44,8 @@ class QuestionApplicationService(
     }
 
     fun publicQuestion(command: QuestionPublicCommand) {
-        val operateUser = userRepository.findById(UserId(command.operateUserId))
-            ?: throw IllegalCommandException(EntityNotFoundException("user not found : ${command.operateUserId}"))
-        val question = questionRepository.findById(QuestionId(command.questionId))
-            ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${command.questionId}"))
+        val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
+        val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
         if ((operateUser canPublic question).not())
             throw IllegalCommandException(NotAllowedPublicQuestionException("user ${command.operateUserId} not allowed public ${command.questionId}"))

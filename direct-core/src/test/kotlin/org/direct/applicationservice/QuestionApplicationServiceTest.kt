@@ -4,6 +4,7 @@ package org.direct.applicationservice
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.direct.applicationservice.QuestionApplicationService.*
 import org.direct.domain.question.*
 import org.direct.domain.question.QuestionVisibility.*
 import org.direct.domain.user.User

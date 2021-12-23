@@ -33,37 +33,60 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
     inner class CreateQuestionTest {
 
         @Test
-        fun `user can create new question`() {
+        fun `user can create new public question`() {
             // setup
-            val command = QuestionNewCommand(
+            val command = QuestionNewPublicCommand(
                 title = "how install Apache Maven ?",
                 subject = "I want to install Apache Maven.",
                 questionerUserId = "USER1",
             )
 
             // execute
-            val newQuestionId = questionApplicationService.newQuestion(command)
+            val newQuestionId = questionApplicationService.newPublicQuestion(command)
 
             // verify
-            inMemoryQuestionRepository().entities[newQuestionId].let {
+            inMemoryQuestionRepository().findById(QuestionId(newQuestionId)).let {
                 assertThat(it).isNotNull
                 assertThat(it?.title).isEqualTo("how install Apache Maven ?")
                 assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
                 assertThat(it?.questioner).isEqualTo(UserId("USER1"))
+                assertThat(it?.visibility).isEqualTo(PUBLIC)
+            }
+        }
+
+        @Test
+        fun `user can create new before public question`() {
+            // setup
+            val command = QuestionNewBeforePublicCommand(
+                title = "how install Apache Maven ?",
+                subject = "I want to install Apache Maven.",
+                questionerUserId = "USER1",
+            )
+
+            // execute
+            val newQuestionId = questionApplicationService.newBeforePublicQuestion(command)
+
+            // verify
+            inMemoryQuestionRepository().findById(QuestionId(newQuestionId)).let {
+                assertThat(it).isNotNull
+                assertThat(it?.title).isEqualTo("how install Apache Maven ?")
+                assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
+                assertThat(it?.questioner).isEqualTo(UserId("USER1"))
+                assertThat(it?.visibility).isEqualTo(BEFORE_PUBLIC)
             }
         }
 
         @Test
         fun `can not create new question without user`() {
             // setup
-            val command = QuestionNewCommand(
+            val command = QuestionNewPublicCommand(
                 title = "how install Apache Maven ?",
                 subject = "I want to install Apache Maven.",
                 questionerUserId = "DONT EXIST USER !",
             )
 
             // execute & verify
-            assertThatThrownBy { questionApplicationService.newQuestion(command) }
+            assertThatThrownBy { questionApplicationService.newPublicQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
         }
 

@@ -6,7 +6,7 @@ import org.direct.domain.question.QuestionRepository
 
 class InMemoryQuestionRepository : QuestionRepository {
 
-    val entities: MutableMap<QuestionId, Question> = HashMap()
+    private val entities: MutableMap<QuestionId, Question> = HashMap()
 
     private fun Question.copy() = Question(
         id = this.id,

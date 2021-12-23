@@ -2,6 +2,7 @@
 
 package org.direct.domain.question
 
+import org.direct.domain.question.QuestionVisibility.BEFORE_PUBLIC
 import org.direct.domain.question.QuestionVisibility.PUBLIC
 import org.direct.domain.user.UserId
 
@@ -15,6 +16,15 @@ class Question(
 ) {
 
     companion object {
+
+        fun newBeforePublic(id: QuestionId, title: String, subject: String, questioner: UserId): Question = Question(
+            id = id,
+            title = title,
+            subject = subject,
+            questioner = questioner,
+            visibility = BEFORE_PUBLIC,
+            resolved = false,
+        )
 
         fun newPublic(id: QuestionId, title: String, subject: String, questioner: UserId): Question = Question(
             id = id,

@@ -16,13 +16,34 @@ class QuestionApplicationService(
     private val userRepository: UserRepository,
 ) {
 
-    data class QuestionNewCommand(
+    data class QuestionNewBeforePublicCommand(
         val title: String,
         val subject: String,
         val questionerUserId: String,
     )
 
-    fun newQuestion(command: QuestionNewCommand): QuestionId {
+    fun newBeforePublicQuestion(command: QuestionNewBeforePublicCommand): String {
+        if (userRepository.exist(UserId(command.questionerUserId)).not())
+            throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
+
+        val newQuestionId = questionIdentityGenerator.generateIdentity()
+        val newQuestion = Question.newBeforePublic(
+            id = newQuestionId,
+            title = command.title,
+            subject = command.subject,
+            questioner = UserId(command.questionerUserId),
+        )
+        questionRepository.save(newQuestion)
+        return newQuestionId.rawId
+    }
+
+    data class QuestionNewPublicCommand(
+        val title: String,
+        val subject: String,
+        val questionerUserId: String,
+    )
+
+    fun newPublicQuestion(command: QuestionNewPublicCommand): String {
         if (userRepository.exist(UserId(command.questionerUserId)).not())
             throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
 
@@ -34,7 +55,7 @@ class QuestionApplicationService(
             questioner = UserId(command.questionerUserId),
         )
         questionRepository.save(newQuestion)
-        return newQuestionId
+        return newQuestionId.rawId
     }
 
     data class QuestionEditCommand(

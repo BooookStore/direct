@@ -45,7 +45,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             val newQuestionId = questionApplicationService.newPublicQuestion(command)
 
             // verify
-            inMemoryQuestionRepository().entities[newQuestionId].let {
+            inMemoryQuestionRepository().findById(QuestionId(newQuestionId)).let {
                 assertThat(it).isNotNull
                 assertThat(it?.title).isEqualTo("how install Apache Maven ?")
                 assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")
@@ -67,7 +67,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             val newQuestionId = questionApplicationService.newBeforePublicQuestion(command)
 
             // verify
-            inMemoryQuestionRepository().findById(newQuestionId).let {
+            inMemoryQuestionRepository().findById(QuestionId(newQuestionId)).let {
                 assertThat(it).isNotNull
                 assertThat(it?.title).isEqualTo("how install Apache Maven ?")
                 assertThat(it?.subject).isEqualTo("I want to install Apache Maven.")

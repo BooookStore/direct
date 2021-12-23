@@ -4,9 +4,9 @@ package org.direct.applicationservice
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.direct.applicationservice.QuestionApplicationService.*
 import org.direct.domain.question.*
-import org.direct.domain.question.QuestionVisibility.BEFORE_PUBLIC
-import org.direct.domain.question.QuestionVisibility.PUBLIC
+import org.direct.domain.question.QuestionVisibility.*
 import org.direct.domain.user.User
 import org.direct.domain.user.UserCategory.NORMAL
 import org.direct.domain.user.UserId
@@ -125,6 +125,40 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             assertThatThrownBy { questionApplicationService.editQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
                 .hasCauseInstanceOf(NotAllowedEditQuestionException::class.java)
+        }
+
+        @Test
+        fun `can delete question by questioner`() {
+            // setup
+            val command = QuestionDeleteCommand(
+                questionId = "QUESTION1",
+                operateUserId = "USER1",
+            )
+
+            // execute
+            questionApplicationService.deleteQuestion(command)
+
+            // verify
+            inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
+                assertThat(it).isNotNull
+                assertThat(it?.visibility).isEqualTo(DELETED)
+            }
+        }
+
+        @Test
+        fun `cannot delete question by other user`() {
+            // setup
+            inMemoryUserRepository().save(User(id = UserId("USER2"), category = NORMAL))
+
+            val command = QuestionDeleteCommand(
+                questionId = "QUESTION1",
+                operateUserId = "USER2",
+            )
+
+            // execute & verify
+            assertThatThrownBy { questionApplicationService.deleteQuestion(command) }
+                .isExactlyInstanceOf(IllegalCommandException::class.java)
+                .hasCauseInstanceOf(NotAllowedDeleteQuestionException::class.java)
         }
 
     }

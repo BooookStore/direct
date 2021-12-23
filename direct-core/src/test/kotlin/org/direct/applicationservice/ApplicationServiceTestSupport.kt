@@ -5,8 +5,6 @@ package org.direct.applicationservice
 import org.direct.adapter.InMemoryQuestionRepository
 import org.direct.adapter.InMemoryUserRepository
 import org.direct.adapter.IncrementalQuestionIdentityGenerator
-import org.direct.domain.DomainRegistry
-import org.direct.domain.DomainRegistryResolver
 import org.junit.jupiter.api.BeforeEach
 
 internal abstract class ApplicationServiceTestSupport {
@@ -22,8 +20,6 @@ internal abstract class ApplicationServiceTestSupport {
         inMemoryQuestionRepository = InMemoryQuestionRepository()
         inMemoryUserRepository = InMemoryUserRepository()
         incrementalQuestionIdentityGenerator = IncrementalQuestionIdentityGenerator()
-
-        DomainRegistry.initialize(TestEnvironmentDomainRegistryResolver())
     }
 
     fun inMemoryQuestionRepository() = inMemoryQuestionRepository ?: throw NullPointerException()
@@ -31,9 +27,5 @@ internal abstract class ApplicationServiceTestSupport {
     fun inMemoryUserRepository() = inMemoryUserRepository ?: throw NullPointerException()
 
     fun incrementalQuestionIdentityGenerator() = incrementalQuestionIdentityGenerator ?: throw NullPointerException()
-
-}
-
-class TestEnvironmentDomainRegistryResolver : DomainRegistryResolver {
 
 }

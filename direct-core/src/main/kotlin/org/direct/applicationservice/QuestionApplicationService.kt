@@ -5,11 +5,8 @@ package org.direct.applicationservice
 import org.direct.domain.DomainException
 import org.direct.domain.EntityNotFoundException
 import org.direct.domain.question.Question
-import org.direct.domain.question.QuestionDeletePolicy.canDelete
-import org.direct.domain.question.QuestionEditPolicy.canEdit
 import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionIdentityGenerator
-import org.direct.domain.question.QuestionPublicPolicy.canPublic
 import org.direct.domain.question.QuestionRepository
 import org.direct.domain.user.UserId
 import org.direct.domain.user.UserRepository
@@ -74,10 +71,8 @@ class QuestionApplicationService(
         val editUser = userRepository.findByIdOrThrow(UserId(command.editUserId))
 
         domain {
-            if ((editUser canEdit question).not()) throw DomainException("user not allowed edit : userId=[${command.editUserId}] questionId=[${command.questionId}]")
-
-            question.editTitle(command.title)
-            question.editSubject(command.subject)
+            question.editTitle(command.title, editUser)
+            question.editSubject(command.subject, editUser)
             questionRepository.save(question)
         }
     }
@@ -92,9 +87,7 @@ class QuestionApplicationService(
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
         domain {
-            if ((operateUser canPublic question).not()) throw DomainException("user not allowed public : userId=[${command.operateUserId}] questionId=[${command.questionId}]")
-
-            question.public()
+            question.public(operateUser)
             questionRepository.save(question)
         }
     }
@@ -109,9 +102,7 @@ class QuestionApplicationService(
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
         domain {
-            if ((operateUser canDelete question).not()) throw DomainException("user not allowd delete : userId=[${command.operateUserId}] questionId=[${command.questionId}]")
-
-            question.delete()
+            question.delete(operateUser)
             questionRepository.save(question)
         }
     }

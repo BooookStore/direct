@@ -2,8 +2,10 @@
 
 package org.direct.domain.question
 
+import org.direct.domain.DomainException
 import org.direct.domain.question.QuestionVisibility.BEFORE_PUBLIC
 import org.direct.domain.question.QuestionVisibility.PUBLIC
+import org.direct.domain.user.User
 import org.direct.domain.user.UserId
 
 class Question(
@@ -49,24 +51,48 @@ class Question(
     var resolved: Boolean = resolved
         private set
 
-    fun editTitle(newTitle: String) {
+    fun editTitle(newTitle: String, editUser: User) {
+        if (canEdit(editUser).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
         title = newTitle
     }
 
-    fun editSubject(newSubject: String) {
+    fun editSubject(newSubject: String, editUser: User) {
+        if (canEdit(editUser).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
         subject = newSubject
     }
 
-    fun public() {
+    fun public(operateUser: User) {
+        if (canPublic(operateUser).not()) throw DomainException("user not allowed public : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         visibility = visibility.public()
     }
 
-    fun delete() {
+    fun delete(operateUser: User) {
+        if (canDelete(operateUser).not()) throw DomainException("user not allowd delete : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         visibility = visibility.delete()
     }
 
     fun isIdentifiedBy(otherQuestion: Question): Boolean {
         return id == otherQuestion.id
     }
+
+    private fun canEdit(editUser: User): Boolean = when {
+        isQuestioner(editUser) -> true
+        editUser.isAuditor() -> true
+        else -> false
+    }
+
+    private fun canPublic(operateUser: User): Boolean = when {
+        isQuestioner(operateUser) -> true
+        operateUser.isAuditor() -> true
+        else -> false
+    }
+
+    fun canDelete(operateUser: User): Boolean = when {
+        isQuestioner(operateUser) -> true
+        operateUser.isAuditor() -> true
+        else -> false
+    }
+
+    private fun isQuestioner(user: User) = questioner == user.id
 
 }

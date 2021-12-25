@@ -2,6 +2,7 @@
 
 package org.direct.applicationservice
 
+import org.direct.domain.DomainException
 import org.direct.domain.exception.EntityNotFoundException
 import org.direct.domain.question.*
 import org.direct.domain.question.QuestionDeletePolicy.canDelete
@@ -69,12 +70,13 @@ class QuestionApplicationService(
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
         val editUser = userRepository.findByIdOrThrow(UserId(command.editUserId))
 
-        if ((editUser canEdit question).not())
-            throw IllegalCommandException(NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.questionId}"))
+        domain {
+            if ((editUser canEdit question).not()) throw DomainException("user not allowed edit : userId=[${command.editUserId}] questionId=[${command.questionId}]")
 
-        question.editTitle(command.title)
-        question.editSubject(command.subject)
-        questionRepository.save(question)
+            question.editTitle(command.title)
+            question.editSubject(command.subject)
+            questionRepository.save(question)
+        }
     }
 
     data class QuestionPublicCommand(
@@ -114,5 +116,11 @@ class QuestionApplicationService(
 
     private fun QuestionRepository.findByIdOrThrow(questionId: QuestionId) = findById(questionId)
         ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${questionId.rawId}"))
+
+    private fun domain(runDomain: () -> Unit) = try {
+        runDomain()
+    } catch (domainException: DomainException) {
+        throw IllegalCommandException(domainException)
+    }
 
 }

@@ -5,6 +5,7 @@ package org.direct.applicationservice
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.direct.applicationservice.QuestionApplicationService.*
+import org.direct.domain.DomainException
 import org.direct.domain.question.*
 import org.direct.domain.question.QuestionVisibility.*
 import org.direct.domain.user.User
@@ -147,7 +148,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             // execute & verify
             assertThatThrownBy { questionApplicationService.editQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
-                .hasCauseInstanceOf(NotAllowedEditQuestionException::class.java)
+                .hasCauseInstanceOf(DomainException::class.java)
         }
 
         @Test

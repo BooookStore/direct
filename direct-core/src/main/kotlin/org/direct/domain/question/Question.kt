@@ -52,26 +52,22 @@ class Question(
         private set
 
     fun editTitle(newTitle: String, editUser: User) {
-        if (canEdit(editUser).not()) {
-            throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
-        }
-
+        if (canEdit(editUser).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
         title = newTitle
     }
 
     fun editSubject(newSubject: String, editUser: User) {
         if (canEdit(editUser).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
-
         subject = newSubject
     }
 
     fun public(operateUser: User) {
         if (canPublic(operateUser).not()) throw DomainException("user not allowed public : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
-
         visibility = visibility.public()
     }
 
-    fun delete() {
+    fun delete(operateUser: User) {
+        if (canDelete(operateUser).not()) throw DomainException("user not allowd delete : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         visibility = visibility.delete()
     }
 
@@ -86,6 +82,12 @@ class Question(
     }
 
     private fun canPublic(operateUser: User): Boolean = when {
+        isQuestioner(operateUser) -> true
+        operateUser.isAuditor() -> true
+        else -> false
+    }
+
+    fun canDelete(operateUser: User): Boolean = when {
         isQuestioner(operateUser) -> true
         operateUser.isAuditor() -> true
         else -> false

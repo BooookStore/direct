@@ -5,7 +5,6 @@ package org.direct.applicationservice
 import org.direct.domain.DomainException
 import org.direct.domain.EntityNotFoundException
 import org.direct.domain.question.Question
-import org.direct.domain.question.QuestionDeletePolicy.canDelete
 import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionIdentityGenerator
 import org.direct.domain.question.QuestionRepository
@@ -103,9 +102,7 @@ class QuestionApplicationService(
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
         domain {
-            if ((operateUser canDelete question).not()) throw DomainException("user not allowd delete : userId=[${command.operateUserId}] questionId=[${command.questionId}]")
-
-            question.delete()
+            question.delete(operateUser)
             questionRepository.save(question)
         }
     }

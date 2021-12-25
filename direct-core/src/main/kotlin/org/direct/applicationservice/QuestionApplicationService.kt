@@ -4,10 +4,13 @@ package org.direct.applicationservice
 
 import org.direct.domain.DomainException
 import org.direct.domain.EntityNotFoundException
-import org.direct.domain.question.*
+import org.direct.domain.question.Question
 import org.direct.domain.question.QuestionDeletePolicy.canDelete
 import org.direct.domain.question.QuestionEditPolicy.canEdit
+import org.direct.domain.question.QuestionId
+import org.direct.domain.question.QuestionIdentityGenerator
 import org.direct.domain.question.QuestionPublicPolicy.canPublic
+import org.direct.domain.question.QuestionRepository
 import org.direct.domain.user.UserId
 import org.direct.domain.user.UserRepository
 
@@ -88,11 +91,12 @@ class QuestionApplicationService(
         val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
-        if ((operateUser canPublic question).not())
-            throw IllegalCommandException(NotAllowedPublicQuestionException("user ${command.operateUserId} not allowed public ${command.questionId}"))
+        domain {
+            if ((operateUser canPublic question).not()) throw DomainException("user not allowed public : userId=[${command.operateUserId}] questionId=[${command.questionId}]")
 
-        question.public()
-        questionRepository.save(question)
+            question.public()
+            questionRepository.save(question)
+        }
     }
 
     data class QuestionDeleteCommand(

@@ -235,7 +235,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             // execute & verify
             assertThatThrownBy { questionApplicationService.publicQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
-                .hasCauseInstanceOf(NotAllowedPublicQuestionException::class.java)
+                .hasCauseInstanceOf(DomainException::class.java)
         }
 
     }

@@ -2,11 +2,15 @@
 
 package org.direct.applicationservice
 
-import org.direct.domain.exception.EntityNotFoundException
-import org.direct.domain.question.*
+import org.direct.domain.DomainException
+import org.direct.domain.EntityNotFoundException
+import org.direct.domain.question.Question
 import org.direct.domain.question.QuestionDeletePolicy.canDelete
 import org.direct.domain.question.QuestionEditPolicy.canEdit
+import org.direct.domain.question.QuestionId
+import org.direct.domain.question.QuestionIdentityGenerator
 import org.direct.domain.question.QuestionPublicPolicy.canPublic
+import org.direct.domain.question.QuestionRepository
 import org.direct.domain.user.UserId
 import org.direct.domain.user.UserRepository
 
@@ -69,12 +73,13 @@ class QuestionApplicationService(
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
         val editUser = userRepository.findByIdOrThrow(UserId(command.editUserId))
 
-        if ((editUser canEdit question).not())
-            throw IllegalCommandException(NotAllowedEditQuestionException("user ${command.editUserId} not allowed edit ${command.questionId}"))
+        domain {
+            if ((editUser canEdit question).not()) throw DomainException("user not allowed edit : userId=[${command.editUserId}] questionId=[${command.questionId}]")
 
-        question.editTitle(command.title)
-        question.editSubject(command.subject)
-        questionRepository.save(question)
+            question.editTitle(command.title)
+            question.editSubject(command.subject)
+            questionRepository.save(question)
+        }
     }
 
     data class QuestionPublicCommand(
@@ -86,11 +91,12 @@ class QuestionApplicationService(
         val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
-        if ((operateUser canPublic question).not())
-            throw IllegalCommandException(NotAllowedPublicQuestionException("user ${command.operateUserId} not allowed public ${command.questionId}"))
+        domain {
+            if ((operateUser canPublic question).not()) throw DomainException("user not allowed public : userId=[${command.operateUserId}] questionId=[${command.questionId}]")
 
-        question.public()
-        questionRepository.save(question)
+            question.public()
+            questionRepository.save(question)
+        }
     }
 
     data class QuestionDeleteCommand(
@@ -102,11 +108,12 @@ class QuestionApplicationService(
         val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
-        if ((operateUser canDelete question).not())
-            throw IllegalCommandException(NotAllowedDeleteQuestionException("user ${command.operateUserId} not allowd delete ${command.questionId}"))
+        domain {
+            if ((operateUser canDelete question).not()) throw DomainException("user not allowd delete : userId=[${command.operateUserId}] questionId=[${command.questionId}]")
 
-        question.delete()
-        questionRepository.save(question)
+            question.delete()
+            questionRepository.save(question)
+        }
     }
 
     private fun UserRepository.findByIdOrThrow(userId: UserId) = findById(userId)
@@ -114,5 +121,11 @@ class QuestionApplicationService(
 
     private fun QuestionRepository.findByIdOrThrow(questionId: QuestionId) = findById(questionId)
         ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${questionId.rawId}"))
+
+    private fun domain(runDomain: () -> Unit) = try {
+        runDomain()
+    } catch (domainException: DomainException) {
+        throw IllegalCommandException(domainException)
+    }
 
 }

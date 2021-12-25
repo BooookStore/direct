@@ -1,5 +1,7 @@
 package org.direct.domain.question
 
+import org.direct.domain.DomainException
+
 enum class QuestionVisibility {
     BEFORE_PUBLIC,
     PUBLIC,
@@ -7,12 +9,12 @@ enum class QuestionVisibility {
 
     fun public(): QuestionVisibility = when (this) {
         BEFORE_PUBLIC -> PUBLIC
-        PUBLIC, DELETED -> throw IllegalQuestionVisibilityTransitionException("$this cannot transit public")
+        PUBLIC, DELETED -> throw DomainException("$this cannot transit public")
     }
 
     fun delete(): QuestionVisibility = when (this) {
         BEFORE_PUBLIC, PUBLIC -> DELETED
-        DELETED -> throw IllegalQuestionVisibilityTransitionException("$this cannot transit deleted")
+        DELETED -> throw DomainException("$this cannot transit deleted")
     }
 
 }

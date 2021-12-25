@@ -257,6 +257,22 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             }
         }
 
+        @Test
+        fun `cannot resovle question by other user`() {
+            // setup
+            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+
+            val command = QuestionResolveCommand(
+                questionId = "QUESTION1",
+                operateUserId = "USER2",
+            )
+
+            // execute & verify
+            assertThatThrownBy { questionApplicationService.resolveQuestion(command) }
+                .isExactlyInstanceOf(IllegalCommandException::class.java)
+                .hasCauseInstanceOf(DomainException::class.java)
+        }
+
     }
 
 }

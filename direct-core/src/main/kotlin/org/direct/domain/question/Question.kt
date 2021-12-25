@@ -71,7 +71,8 @@ class Question(
         visibility = visibility.delete()
     }
 
-    fun resolve(@Suppress("UNUSED_PARAMETER") operateUser: User) {
+    fun resolve(operateUser: User) {
+        if (canResolve(operateUser).not()) throw DomainException("user not allowd resolve : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         resolved = true
     }
 
@@ -96,6 +97,8 @@ class Question(
         operateUser.isAuditor() -> true
         else -> false
     }
+
+    fun canResolve(operateUser: User): Boolean = isQuestioner(operateUser)
 
     private fun isQuestioner(user: User) = questioner == user.id
 

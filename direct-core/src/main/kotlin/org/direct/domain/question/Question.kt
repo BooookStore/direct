@@ -3,7 +3,6 @@
 package org.direct.domain.question
 
 import org.direct.domain.DomainException
-import org.direct.domain.question.QuestionEditPolicy.canEdit
 import org.direct.domain.question.QuestionVisibility.BEFORE_PUBLIC
 import org.direct.domain.question.QuestionVisibility.PUBLIC
 import org.direct.domain.user.User
@@ -78,6 +77,12 @@ class Question(
 
     fun isIdentifiedBy(otherQuestion: Question): Boolean {
         return id == otherQuestion.id
+    }
+
+    infix fun User.canEdit(editQuestion: Question): Boolean = when {
+        isAuthorOf(editQuestion) -> true
+        isAuditor() -> true
+        else -> false
     }
 
 }

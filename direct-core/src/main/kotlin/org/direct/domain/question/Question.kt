@@ -60,15 +60,13 @@ class Question(
     }
 
     fun editSubject(newSubject: String, editUser: User) {
-        if (canEdit(editUser).not()) {
-            throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
-        }
+        if (canEdit(editUser).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
 
         subject = newSubject
     }
 
     fun public(operateUser: User) {
-        if ((operateUser canPublic this).not()) throw DomainException("user not allowed public : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+        if (canPublic(operateUser).not()) throw DomainException("user not allowed public : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
 
         visibility = visibility.public()
     }
@@ -87,12 +85,12 @@ class Question(
         else -> false
     }
 
-    private fun isQuestioner(user: User) = questioner == user.id
-
-    infix fun User.canPublic(question: Question): Boolean = when {
-        isAuthorOf(question) -> true
-        isAuditor() -> true
+    private fun canPublic(operateUser: User): Boolean = when {
+        isQuestioner(operateUser) -> true
+        operateUser.isAuditor() -> true
         else -> false
     }
+
+    private fun isQuestioner(user: User) = questioner == user.id
 
 }

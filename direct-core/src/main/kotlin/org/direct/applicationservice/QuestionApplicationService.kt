@@ -27,15 +27,17 @@ class QuestionApplicationService(
         if (userRepository.exist(UserId(command.questionerUserId)).not())
             throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
 
-        val newQuestionId = questionIdentityGenerator.generateIdentity()
-        val newQuestion = Question.newBeforePublic(
-            id = newQuestionId,
-            title = command.title,
-            subject = command.subject,
-            questioner = UserId(command.questionerUserId),
-        )
-        questionRepository.save(newQuestion)
-        return newQuestionId.rawId
+        return domain {
+            val newQuestionId = questionIdentityGenerator.generateIdentity()
+            val newQuestion = Question.newBeforePublic(
+                id = newQuestionId,
+                title = command.title,
+                subject = command.subject,
+                questioner = UserId(command.questionerUserId),
+            )
+            questionRepository.save(newQuestion)
+            newQuestionId.rawId
+        }
     }
 
     data class QuestionNewPublicCommand(
@@ -48,15 +50,17 @@ class QuestionApplicationService(
         if (userRepository.exist(UserId(command.questionerUserId)).not())
             throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
 
-        val newQuestionId = questionIdentityGenerator.generateIdentity()
-        val newQuestion = Question.newPublic(
-            id = newQuestionId,
-            title = command.title,
-            subject = command.subject,
-            questioner = UserId(command.questionerUserId),
-        )
-        questionRepository.save(newQuestion)
-        return newQuestionId.rawId
+        return domain {
+            val newQuestionId = questionIdentityGenerator.generateIdentity()
+            val newQuestion = Question.newPublic(
+                id = newQuestionId,
+                title = command.title,
+                subject = command.subject,
+                questioner = UserId(command.questionerUserId),
+            )
+            questionRepository.save(newQuestion)
+            newQuestionId.rawId
+        }
     }
 
     data class QuestionEditCommand(
@@ -113,10 +117,12 @@ class QuestionApplicationService(
     private fun QuestionRepository.findByIdOrThrow(questionId: QuestionId) = findById(questionId)
         ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${questionId.rawId}"))
 
-    private fun domain(runDomain: () -> Unit) = try {
-        runDomain()
-    } catch (domainException: DomainException) {
-        throw IllegalCommandException(domainException)
+    private fun <R> domain(runDomain: () -> R): R {
+        try {
+            return runDomain()
+        } catch (domainException: DomainException) {
+            throw IllegalCommandException(domainException)
+        }
     }
 
 }

@@ -104,11 +104,12 @@ class QuestionApplicationService(
         val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
-        if ((operateUser canDelete question).not())
-            throw IllegalCommandException(NotAllowedDeleteQuestionException("user ${command.operateUserId} not allowd delete ${command.questionId}"))
+        domain {
+            if ((operateUser canDelete question).not()) throw DomainException("user not allowd delete : userId=[${command.operateUserId}] questionId=[${command.questionId}]")
 
-        question.delete()
-        questionRepository.save(question)
+            question.delete()
+            questionRepository.save(question)
+        }
     }
 
     private fun UserRepository.findByIdOrThrow(userId: UserId) = findById(userId)

@@ -182,7 +182,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             // execute & verify
             assertThatThrownBy { questionApplicationService.deleteQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
-                .hasCauseInstanceOf(NotAllowedDeleteQuestionException::class.java)
+                .hasCauseInstanceOf(DomainException::class.java)
         }
 
     }

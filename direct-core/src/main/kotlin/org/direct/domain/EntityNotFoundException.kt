@@ -1,3 +1,3 @@
-package org.direct.domain.exception
+package org.direct.domain
 
 class EntityNotFoundException(message: String) : Exception(message)

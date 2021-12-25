@@ -3,7 +3,7 @@
 package org.direct.applicationservice
 
 import org.direct.domain.DomainException
-import org.direct.domain.exception.EntityNotFoundException
+import org.direct.domain.EntityNotFoundException
 import org.direct.domain.question.*
 import org.direct.domain.question.QuestionDeletePolicy.canDelete
 import org.direct.domain.question.QuestionEditPolicy.canEdit

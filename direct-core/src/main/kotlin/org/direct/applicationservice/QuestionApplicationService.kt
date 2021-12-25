@@ -111,6 +111,21 @@ class QuestionApplicationService(
         }
     }
 
+    data class QuestionResolveCommand(
+        val questionId: String,
+        val operateUserId: String,
+    )
+
+    fun resolveQuestion(command: QuestionResolveCommand) {
+        val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
+        val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
+
+        domain {
+            question.resolve(operateUser)
+            questionRepository.save(question)
+        }
+    }
+
     private fun UserRepository.findByIdOrThrow(userId: UserId) = findById(userId)
         ?: throw IllegalCommandException(EntityNotFoundException("user not found : ${userId.rawId}"))
 

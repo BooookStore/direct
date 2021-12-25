@@ -6,7 +6,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.direct.applicationservice.QuestionApplicationService.*
 import org.direct.domain.DomainException
-import org.direct.domain.question.*
+import org.direct.domain.question.Question
+import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionVisibility.*
 import org.direct.domain.user.User
 import org.direct.domain.user.UserCategory.NORMAL
@@ -236,6 +237,24 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             assertThatThrownBy { questionApplicationService.publicQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
                 .hasCauseInstanceOf(DomainException::class.java)
+        }
+
+        @Test
+        fun `can resolve question by questioner`() {
+            // setup
+            val command = QuestionResolveCommand(
+                questionId = "QUESTION1",
+                operateUserId = "USER1",
+            )
+
+            // execute
+            questionApplicationService.resolveQuestion(command)
+
+            // verify
+            inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
+                assertThat(it).isNotNull
+                assertThat(it?.resolved).isEqualTo(true)
+            }
         }
 
     }

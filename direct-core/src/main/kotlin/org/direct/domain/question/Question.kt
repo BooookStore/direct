@@ -71,6 +71,10 @@ class Question(
         visibility = visibility.delete()
     }
 
+    fun resolve(@Suppress("UNUSED_PARAMETER") operateUser: User) {
+        resolved = true
+    }
+
     fun isIdentifiedBy(otherQuestion: Question): Boolean {
         return id == otherQuestion.id
     }

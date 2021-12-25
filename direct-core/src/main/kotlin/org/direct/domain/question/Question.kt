@@ -52,7 +52,7 @@ class Question(
         private set
 
     fun editTitle(newTitle: String, editUser: User) {
-        if (editUser.canEdit(this).not()) {
+        if (canEdit(editUser).not()) {
             throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
         }
 
@@ -60,7 +60,7 @@ class Question(
     }
 
     fun editSubject(newSubject: String, editUser: User) {
-        if (editUser.canEdit(this).not()) {
+        if (canEdit(editUser).not()) {
             throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
         }
 
@@ -79,10 +79,12 @@ class Question(
         return id == otherQuestion.id
     }
 
-    infix fun User.canEdit(editQuestion: Question): Boolean = when {
-        isAuthorOf(editQuestion) -> true
-        isAuditor() -> true
+    private fun canEdit(editUser: User): Boolean = when {
+        isQuestioner(editUser) -> true
+        editUser.isAuditor() -> true
         else -> false
     }
+
+    private fun isQuestioner(user: User) = questioner == user.id
 
 }

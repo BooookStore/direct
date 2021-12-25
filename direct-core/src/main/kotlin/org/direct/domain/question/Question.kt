@@ -67,7 +67,9 @@ class Question(
         subject = newSubject
     }
 
-    fun public() {
+    fun public(operateUser: User) {
+        if ((operateUser canPublic this).not()) throw DomainException("user not allowed public : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+
         visibility = visibility.public()
     }
 
@@ -86,5 +88,11 @@ class Question(
     }
 
     private fun isQuestioner(user: User) = questioner == user.id
+
+    infix fun User.canPublic(question: Question): Boolean = when {
+        isAuthorOf(question) -> true
+        isAuditor() -> true
+        else -> false
+    }
 
 }

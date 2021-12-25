@@ -8,7 +8,6 @@ import org.direct.domain.question.Question
 import org.direct.domain.question.QuestionDeletePolicy.canDelete
 import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionIdentityGenerator
-import org.direct.domain.question.QuestionPublicPolicy.canPublic
 import org.direct.domain.question.QuestionRepository
 import org.direct.domain.user.UserId
 import org.direct.domain.user.UserRepository
@@ -89,9 +88,7 @@ class QuestionApplicationService(
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
         domain {
-            if ((operateUser canPublic question).not()) throw DomainException("user not allowed public : userId=[${command.operateUserId}] questionId=[${command.questionId}]")
-
-            question.public()
+            question.public(operateUser)
             questionRepository.save(question)
         }
     }

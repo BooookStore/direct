@@ -2,8 +2,11 @@
 
 package org.direct.domain.question
 
+import org.direct.domain.DomainException
+import org.direct.domain.question.QuestionEditPolicy.canEdit
 import org.direct.domain.question.QuestionVisibility.BEFORE_PUBLIC
 import org.direct.domain.question.QuestionVisibility.PUBLIC
+import org.direct.domain.user.User
 import org.direct.domain.user.UserId
 
 class Question(
@@ -49,11 +52,19 @@ class Question(
     var resolved: Boolean = resolved
         private set
 
-    fun editTitle(newTitle: String) {
+    fun editTitle(newTitle: String, editUser: User) {
+        if (editUser.canEdit(this).not()) {
+            throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
+        }
+
         title = newTitle
     }
 
-    fun editSubject(newSubject: String) {
+    fun editSubject(newSubject: String, editUser: User) {
+        if (editUser.canEdit(this).not()) {
+            throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
+        }
+
         subject = newSubject
     }
 

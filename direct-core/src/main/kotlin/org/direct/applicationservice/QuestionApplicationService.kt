@@ -4,6 +4,8 @@ package org.direct.applicationservice
 
 import org.direct.domain.DomainException
 import org.direct.domain.EntityNotFoundException
+import org.direct.domain.answer.AnswerId
+import org.direct.domain.answer.AnswerRepository
 import org.direct.domain.question.Question
 import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionIdentityGenerator
@@ -15,6 +17,7 @@ class QuestionApplicationService(
     private val questionIdentityGenerator: QuestionIdentityGenerator,
     private val questionRepository: QuestionRepository,
     private val userRepository: UserRepository,
+    private val answerRepository: AnswerRepository,
 ) {
 
     data class QuestionNewBeforePublicCommand(
@@ -113,15 +116,19 @@ class QuestionApplicationService(
 
     data class QuestionResolveCommand(
         val questionId: String,
+        val answerId: String,
         val operateUserId: String,
     )
 
     fun resolveQuestion(command: QuestionResolveCommand) {
+        if (answerRepository.exist(AnswerId(command.answerId)).not())
+            throw IllegalCommandException(EntityNotFoundException("answer not found : ${command.answerId}"))
+
         val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
 
         domain {
-            question.resolve(operateUser)
+            question.resolve(AnswerId(command.answerId), operateUser)
             questionRepository.save(question)
         }
     }

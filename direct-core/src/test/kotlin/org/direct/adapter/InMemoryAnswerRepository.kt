@@ -10,8 +10,14 @@ class InMemoryAnswerRepository : AnswerRepository {
 
     private val entities: MutableMap<AnswerId, Answer> = HashMap()
 
+    private fun Answer.copy() = Answer(id = id, replyTo = replyTo, subject = subject, answerer = answerer)
+
     override fun save(answer: Answer) {
         entities[answer.id] = answer
+    }
+
+    override fun findById(answerId: AnswerId): Answer? {
+        return entities[answerId]?.copy()
     }
 
 }

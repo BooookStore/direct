@@ -14,7 +14,7 @@ class InMemoryQuestionRepository : QuestionRepository {
         subject = this.subject,
         questioner = this.questioner,
         visibility = this.visibility,
-        resolved = this.resolved,
+        resolved = this.resolveStatus,
     )
 
     override fun save(question: Question) {

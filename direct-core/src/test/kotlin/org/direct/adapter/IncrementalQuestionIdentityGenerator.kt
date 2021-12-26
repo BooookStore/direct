@@ -7,6 +7,6 @@ class IncrementalQuestionIdentityGenerator : QuestionIdentityGenerator {
 
     private var currentId = 0
 
-    override fun generateIdentity(): QuestionId = QuestionId("QUESTION$currentId++")
+    override fun generateIdentity(): QuestionId = QuestionId("QUESTION${currentId++}")
 
 }

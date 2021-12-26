@@ -3,6 +3,7 @@
 package org.direct.domain.question
 
 import org.direct.domain.DomainException
+import org.direct.domain.answer.AnswerId
 import org.direct.domain.question.QuestionVisibility.BEFORE_PUBLIC
 import org.direct.domain.question.QuestionVisibility.PUBLIC
 import org.direct.domain.user.User
@@ -14,7 +15,7 @@ class Question(
     subject: String,
     val questioner: UserId,
     visibility: QuestionVisibility,
-    resolved: Boolean,
+    resolved: QuestionResolveStatus,
 ) {
 
     companion object {
@@ -25,7 +26,7 @@ class Question(
             subject = subject,
             questioner = questioner,
             visibility = BEFORE_PUBLIC,
-            resolved = false,
+            resolved = QuestionUnResolve(),
         )
 
         fun newPublic(id: QuestionId, title: String, subject: String, questioner: UserId): Question = Question(
@@ -34,7 +35,7 @@ class Question(
             subject = subject,
             questioner = questioner,
             visibility = PUBLIC,
-            resolved = false,
+            resolved = QuestionUnResolve(),
         )
 
     }
@@ -48,7 +49,7 @@ class Question(
     var visibility: QuestionVisibility = visibility
         private set
 
-    var resolved: Boolean = resolved
+    var resolveStatus: QuestionResolveStatus = resolved
         private set
 
     fun editTitle(newTitle: String, editUser: User) {
@@ -69,6 +70,14 @@ class Question(
     fun delete(operateUser: User) {
         if (canDelete(operateUser).not()) throw DomainException("user not allowd delete : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         visibility = visibility.delete()
+    }
+
+    fun resolve(resolvedAnswerId: AnswerId, operateUser: User) {
+        if (resolveStatus is QuestionResolved) throw DomainException("question already resolved : questionId=[${id.rawId}]")
+        if (visibility != PUBLIC) throw DomainException("can't not public question to resolve : questionId=[${id.rawId}]")
+        if (canResolve(operateUser).not()) throw DomainException("user not allowd resolve : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+
+        resolveStatus = QuestionResolved(resolvedAnswerId)
     }
 
     fun isIdentifiedBy(otherQuestion: Question): Boolean {
@@ -92,6 +101,8 @@ class Question(
         operateUser.isAuditor() -> true
         else -> false
     }
+
+    fun canResolve(operateUser: User): Boolean = isQuestioner(operateUser)
 
     private fun isQuestioner(user: User) = questioner == user.id
 

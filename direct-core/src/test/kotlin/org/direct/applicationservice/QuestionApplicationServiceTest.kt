@@ -6,7 +6,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.direct.applicationservice.QuestionApplicationService.*
 import org.direct.domain.DomainException
-import org.direct.domain.question.*
+import org.direct.domain.EntityNotFoundException
+import org.direct.domain.answer.Answer
+import org.direct.domain.answer.AnswerId
+import org.direct.domain.question.Question
+import org.direct.domain.question.QuestionId
+import org.direct.domain.question.QuestionResolved
+import org.direct.domain.question.QuestionUnResolve
 import org.direct.domain.question.QuestionVisibility.*
 import org.direct.domain.user.User
 import org.direct.domain.user.UserCategory.NORMAL
@@ -25,6 +31,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             incrementalQuestionIdentityGenerator(),
             inMemoryQuestionRepository(),
             inMemoryUserRepository(),
+            inMemoryAnswerRepository(),
         )
 
         inMemoryUserRepository().save(User(UserId("USER1"), NORMAL))
@@ -105,7 +112,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
                     subject = "I want to install Apache Maven.",
                     questioner = UserId("USER1"),
                     visibility = PUBLIC,
-                    resolved = false,
+                    resolved = QuestionUnResolve()
                 )
             )
         }
@@ -199,7 +206,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
                     subject = "I want to install Apache Maven.",
                     questioner = UserId("USER1"),
                     visibility = BEFORE_PUBLIC,
-                    resolved = false,
+                    resolved = QuestionUnResolve(),
                 )
             )
         }
@@ -236,6 +243,89 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             assertThatThrownBy { questionApplicationService.publicQuestion(command) }
                 .isExactlyInstanceOf(IllegalCommandException::class.java)
                 .hasCauseInstanceOf(DomainException::class.java)
+        }
+
+    }
+
+    @Nested
+    inner class `already exist question and answer` {
+
+        @BeforeEach
+        fun beforeEach() {
+            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+
+            inMemoryQuestionRepository().save(
+                Question(
+                    id = QuestionId("QUESTION1"),
+                    title = "how install Apache Maven ?",
+                    subject = "I want to install Apache Maven.",
+                    questioner = UserId("USER1"),
+                    visibility = PUBLIC,
+                    resolved = QuestionUnResolve(),
+                )
+            )
+
+            inMemoryAnswerRepository().save(
+                Answer(
+                    id = AnswerId("ANSWER1"),
+                    replyTo = QuestionId("QUESTION1"),
+                    subject = "apache maven can install by ...",
+                    answerer = UserId("USER2"),
+                )
+            )
+        }
+
+        @Test
+        fun `can resolve question by questioner`() {
+            // setup
+            val command = QuestionResolveCommand(
+                questionId = "QUESTION1",
+                operateUserId = "USER1",
+                answerId = "ANSWER1",
+            )
+
+            // execute
+            questionApplicationService.resolveQuestion(command)
+
+            // verify
+            inMemoryQuestionRepository().findById(QuestionId("QUESTION1")).let {
+                assertThat(it).isNotNull
+                assertThat(it?.resolveStatus).isEqualTo(QuestionResolved(AnswerId("ANSWER1")))
+            }
+        }
+
+        @Test
+        fun `cannot resovle question by other user`() {
+            // setup
+            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+
+            val command = QuestionResolveCommand(
+                questionId = "QUESTION1",
+                operateUserId = "USER2",
+                answerId = "ANSWER1",
+            )
+
+            // execute & verify
+            assertThatThrownBy { questionApplicationService.resolveQuestion(command) }
+                .isExactlyInstanceOf(IllegalCommandException::class.java)
+                .hasCauseInstanceOf(DomainException::class.java)
+        }
+
+        @Test
+        fun `cannot resovle question by not exist answer`() {
+            // setup
+            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
+
+            val command = QuestionResolveCommand(
+                questionId = "QUESTION1",
+                operateUserId = "USER2",
+                answerId = "ANSWER2",
+            )
+
+            // execute & verify
+            assertThatThrownBy { questionApplicationService.resolveQuestion(command) }
+                .isExactlyInstanceOf(IllegalCommandException::class.java)
+                .hasCauseInstanceOf(EntityNotFoundException::class.java)
         }
 
     }

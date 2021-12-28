@@ -10,8 +10,6 @@ import org.direct.domain.question.Question
 import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionIdentityGenerator
 import org.direct.domain.question.QuestionRepository
-import org.direct.domain.user.User
-import org.direct.domain.user.UserCategory
 import org.direct.domain.user.UserId
 
 class QuestionApplicationService(
@@ -58,21 +56,6 @@ class QuestionApplicationService(
             questionRepository.save(newQuestion)
             newQuestionId.rawId
         }
-    }
-
-    data class UserCommand(
-        val userId: String,
-        val userCategory: String,
-    ) {
-
-        fun buildDomainEntity(): User {
-            try {
-                return User(UserId(userId), UserCategory.valueOf(userCategory))
-            } catch (exception: IllegalArgumentException) {
-                throw IllegalCommandException(exception)
-            }
-        }
-
     }
 
     data class QuestionEditCommand(

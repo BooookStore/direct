@@ -92,14 +92,12 @@ class Question(
     }
 
     fun resolve(resolvedAnswerId: AnswerId, operateUser: User) {
-        if (resolveStatus is QuestionResolved)
-            throw DomainException("question already resolved : questionId=[${id.rawId}]")
         if (QuestionAuthorityPolicy.canResolve(questioner, operateUser).not())
             throw DomainException("user not allowd resolve : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         if (QuestionVisibilityAndResolveStatusPolicy.validate(visibility, QuestionResolved(resolvedAnswerId)).not())
             throw DomainException("can't question to resolved : questionId=[${id.rawId}]")
 
-        resolveStatus = QuestionResolved(resolvedAnswerId)
+        resolveStatus = resolveStatus.toResolved(resolvedAnswerId)
     }
 
 }

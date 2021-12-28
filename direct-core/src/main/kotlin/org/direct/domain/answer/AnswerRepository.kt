@@ -6,6 +6,6 @@ interface AnswerRepository {
 
     fun findById(answerId: AnswerId): Answer?
 
-    fun exist(answerId: AnswerId) = findById(answerId) != null
+    fun exist(answerId: AnswerId): Boolean = findById(answerId) != null
 
 }

@@ -2,10 +2,10 @@ package org.direct.domain.question
 
 object QuestionVisibilityAndResolveStatusPolicy {
 
-    infix fun QuestionResolveStatus.canCombine(questionVisibility: QuestionVisibility): Boolean =
+    infix fun QuestionResolveStatus.canCombineVisibility(questionVisibility: QuestionVisibility): Boolean =
         validate(questionVisibility, this)
 
-    infix fun QuestionVisibility.canCombine(questionResolveStatus: QuestionResolveStatus): Boolean =
+    infix fun QuestionVisibility.canCombineResolveStatus(questionResolveStatus: QuestionResolveStatus): Boolean =
         validate(this, questionResolveStatus)
 
     fun validate(visibility: QuestionVisibility, questionResolveStatus: QuestionResolveStatus): Boolean {

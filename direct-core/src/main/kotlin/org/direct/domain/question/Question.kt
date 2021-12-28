@@ -9,7 +9,8 @@ import org.direct.domain.question.QuestionAuthorityPolicy.allowResolve
 import org.direct.domain.question.QuestionAuthorityPolicy.allowedEdit
 import org.direct.domain.question.QuestionAuthorityPolicy.allowedPublic
 import org.direct.domain.question.QuestionVisibility.*
-import org.direct.domain.question.QuestionVisibilityAndResolveStatusPolicy.canCombine
+import org.direct.domain.question.QuestionVisibilityAndResolveStatusPolicy.canCombineResolveStatus
+import org.direct.domain.question.QuestionVisibilityAndResolveStatusPolicy.canCombineVisibility
 import org.direct.domain.user.User
 import org.direct.domain.user.UserId
 
@@ -76,21 +77,21 @@ class Question(
 
     fun public(operateUser: User) {
         if ((operateUser allowedPublic this).not()) throw DomainException("user not allowed public : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
-        if ((resolveStatus canCombine PUBLIC).not()) throw DomainException("can't public question : questionId=[${id.rawId}]")
+        if ((resolveStatus canCombineVisibility PUBLIC).not()) throw DomainException("can't public question : questionId=[${id.rawId}]")
 
         visibility = visibility.public()
     }
 
     fun delete(operateUser: User) {
         if ((operateUser allowDelete this).not()) throw DomainException("user not allowd delete : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
-        if ((resolveStatus canCombine DELETED).not()) throw DomainException("can't delete question : questionId=[${id.rawId}]")
+        if ((resolveStatus canCombineVisibility DELETED).not()) throw DomainException("can't delete question : questionId=[${id.rawId}]")
 
         visibility = visibility.delete()
     }
 
     fun resolve(resolvedAnswerId: AnswerId, operateUser: User) {
         if ((operateUser allowResolve this).not()) throw DomainException("user not allowd resolve : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
-        if ((visibility canCombine QuestionResolved(resolvedAnswerId)).not()) throw DomainException("can't question to resolved : questionId=[${id.rawId}]")
+        if ((visibility canCombineResolveStatus QuestionResolved(resolvedAnswerId)).not()) throw DomainException("can't question to resolved : questionId=[${id.rawId}]")
 
         resolveStatus = resolveStatus.toResolved(resolvedAnswerId)
     }

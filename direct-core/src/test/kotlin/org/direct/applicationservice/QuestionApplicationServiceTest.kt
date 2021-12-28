@@ -84,20 +84,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             }
         }
 
-        @Test
-        fun `can not create new question without user`() {
-            // setup
-            val command = QuestionNewPublicCommand(
-                title = "how install Apache Maven ?",
-                subject = "I want to install Apache Maven.",
-                questionerUserId = "DONT EXIST USER !",
-            )
-
-            // execute & verify
-            assertThatThrownBy { questionApplicationService.newPublicQuestion(command) }
-                .isExactlyInstanceOf(IllegalCommandException::class.java)
-        }
-
     }
 
     @Nested

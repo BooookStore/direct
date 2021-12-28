@@ -27,9 +27,6 @@ class QuestionApplicationService(
     )
 
     fun newBeforePublicQuestion(command: QuestionNewBeforePublicCommand): String {
-        if (userRepository.exist(UserId(command.questionerUserId)).not())
-            throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
-
         return domain {
             val newQuestionId = questionIdentityGenerator.generateIdentity()
             val newQuestion = Question.newBeforePublic(
@@ -50,9 +47,6 @@ class QuestionApplicationService(
     )
 
     fun newPublicQuestion(command: QuestionNewPublicCommand): String {
-        if (userRepository.exist(UserId(command.questionerUserId)).not())
-            throw IllegalCommandException(EntityNotFoundException("user not found : ${command.questionerUserId}"))
-
         return domain {
             val newQuestionId = questionIdentityGenerator.generateIdentity()
             val newQuestion = Question.newPublic(

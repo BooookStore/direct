@@ -10,11 +10,7 @@ object QuestionAuthorityPolicy {
         else -> false
     }
 
-    infix fun User.allowedPublic(question: Question): Boolean = when {
-        isQuestioner(question) -> true
-        isAuditor() -> true
-        else -> false
-    }
+    infix fun User.allowedPublic(question: Question): Boolean = isQuestioner(question)
 
     infix fun User.allowDelete(question: Question): Boolean = when {
         isQuestioner(question) -> true

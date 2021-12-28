@@ -10,13 +10,13 @@ import org.direct.domain.question.Question
 import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionIdentityGenerator
 import org.direct.domain.question.QuestionRepository
+import org.direct.domain.user.User
+import org.direct.domain.user.UserCategory
 import org.direct.domain.user.UserId
-import org.direct.domain.user.UserRepository
 
 class QuestionApplicationService(
     private val questionIdentityGenerator: QuestionIdentityGenerator,
     private val questionRepository: QuestionRepository,
-    private val userRepository: UserRepository,
     private val answerRepository: AnswerRepository,
 ) {
 
@@ -60,16 +60,31 @@ class QuestionApplicationService(
         }
     }
 
+    data class UserCommand(
+        val userId: String,
+        val userCategory: String,
+    ) {
+
+        fun buildDomainEntity(): User {
+            try {
+                return User(UserId(userId), UserCategory.valueOf(userCategory))
+            } catch (exception: IllegalArgumentException) {
+                throw IllegalCommandException(exception)
+            }
+        }
+
+    }
+
     data class QuestionEditCommand(
         val questionId: String,
         val title: String,
         val subject: String,
-        val editUserId: String,
+        val editUser: UserCommand,
     )
 
     fun editQuestion(command: QuestionEditCommand) {
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
-        val editUser = userRepository.findByIdOrThrow(UserId(command.editUserId))
+        val editUser = command.editUser.buildDomainEntity()
 
         domain {
             question.editTitle(command.title, editUser)
@@ -80,12 +95,12 @@ class QuestionApplicationService(
 
     data class QuestionPublicCommand(
         val questionId: String,
-        val operateUserId: String,
+        val operateUser: UserCommand,
     )
 
     fun publicQuestion(command: QuestionPublicCommand) {
-        val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
+        val operateUser = command.operateUser.buildDomainEntity()
 
         domain {
             question.public(operateUser)
@@ -95,12 +110,12 @@ class QuestionApplicationService(
 
     data class QuestionDeleteCommand(
         val questionId: String,
-        val operateUserId: String,
+        val operateUser: UserCommand,
     )
 
     fun deleteQuestion(command: QuestionDeleteCommand) {
-        val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
+        val operateUser = command.operateUser.buildDomainEntity()
 
         domain {
             question.delete(operateUser)
@@ -111,24 +126,21 @@ class QuestionApplicationService(
     data class QuestionResolveCommand(
         val questionId: String,
         val answerId: String,
-        val operateUserId: String,
+        val operateUser: UserCommand,
     )
 
     fun resolveQuestion(command: QuestionResolveCommand) {
         if (answerRepository.exist(AnswerId(command.answerId)).not())
             throw IllegalCommandException(EntityNotFoundException("answer not found : ${command.answerId}"))
 
-        val operateUser = userRepository.findByIdOrThrow(UserId(command.operateUserId))
         val question = questionRepository.findByIdOrThrow(QuestionId(command.questionId))
+        val operateUser = command.operateUser.buildDomainEntity()
 
         domain {
             question.resolve(AnswerId(command.answerId), operateUser)
             questionRepository.save(question)
         }
     }
-
-    private fun UserRepository.findByIdOrThrow(userId: UserId) = findById(userId)
-        ?: throw IllegalCommandException(EntityNotFoundException("user not found : ${userId.rawId}"))
 
     private fun QuestionRepository.findByIdOrThrow(questionId: QuestionId) = findById(questionId)
         ?: throw IllegalCommandException(EntityNotFoundException("question not found : ${questionId.rawId}"))

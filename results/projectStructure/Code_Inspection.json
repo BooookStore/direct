@@ -1,25 +1,6 @@
 {
   "modules": [
     {
-      "name": "direct",
-      "contentEntries": [
-        {
-          "path": "file://$PROJECT_DIR$",
-          "sourceFolders": []
-        }
-      ],
-      "orderEntries": [
-        {
-          "name": "jbr-11",
-          "type": "SDK"
-        },
-        {
-          "name": "<Module source>",
-          "type": "Own sources"
-        }
-      ]
-    },
-    {
       "name": "direct-core",
       "contentEntries": [
         {
@@ -94,6 +75,25 @@
         {
           "name": "Maven: org.assertj:assertj-core:3.21.0",
           "type": "Library"
+        }
+      ]
+    },
+    {
+      "name": "direct",
+      "contentEntries": [
+        {
+          "path": "file://$PROJECT_DIR$",
+          "sourceFolders": []
+        }
+      ],
+      "orderEntries": [
+        {
+          "name": "jbr-11",
+          "type": "SDK"
+        },
+        {
+          "name": "<Module source>",
+          "type": "Own sources"
         }
       ]
     }

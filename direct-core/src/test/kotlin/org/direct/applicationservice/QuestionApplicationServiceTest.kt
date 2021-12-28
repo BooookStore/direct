@@ -93,7 +93,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
                     subject = "I want to install Apache Maven.",
                     questioner = UserId("USER1"),
                     visibility = PUBLIC,
-                    resolved = QuestionUnResolve()
+                    resolveStatus = QuestionUnResolve()
                 )
             )
         }
@@ -195,7 +195,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
                     subject = "I want to install Apache Maven.",
                     questioner = UserId("USER1"),
                     visibility = BEFORE_PUBLIC,
-                    resolved = QuestionUnResolve(),
+                    resolveStatus = QuestionUnResolve(),
                 )
             )
         }
@@ -252,7 +252,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
                     subject = "I want to install Apache Maven.",
                     questioner = UserId("USER1"),
                     visibility = PUBLIC,
-                    resolved = QuestionUnResolve(),
+                    resolveStatus = QuestionUnResolve(),
                 )
             )
 

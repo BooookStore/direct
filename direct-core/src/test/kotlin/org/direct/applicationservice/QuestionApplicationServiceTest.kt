@@ -14,8 +14,6 @@ import org.direct.domain.question.QuestionId
 import org.direct.domain.question.QuestionResolved
 import org.direct.domain.question.QuestionUnResolve
 import org.direct.domain.question.QuestionVisibility.*
-import org.direct.domain.user.User
-import org.direct.domain.user.UserCategory.NORMAL
 import org.direct.domain.user.UserId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -32,8 +30,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
             inMemoryQuestionRepository(),
             inMemoryAnswerRepository(),
         )
-
-        inMemoryUserRepository().save(User(UserId("USER1"), NORMAL))
     }
 
     @Nested
@@ -131,8 +127,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `cannot edit question by other user`() {
             // setup
-            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
-
             val command = QuestionEditCommand(
                 questionId = "QUESTION1",
                 title = "how install Apache Maven 3",
@@ -173,8 +167,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `cannot delete question by other user`() {
             // setup
-            inMemoryUserRepository().save(User(id = UserId("USER2"), category = NORMAL))
-
             val command = QuestionDeleteCommand(
                 questionId = "QUESTION1",
                 operateUser = UserCommand(
@@ -232,8 +224,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `cannot public question by other user`() {
             // setup
-            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
-
             val command = QuestionPublicCommand(
                 questionId = "QUESTION1",
                 operateUser = UserCommand(
@@ -255,8 +245,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
 
         @BeforeEach
         fun beforeEach() {
-            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
-
             inMemoryQuestionRepository().save(
                 Question(
                     id = QuestionId("QUESTION1"),
@@ -303,8 +291,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `cannot resovle question by other user`() {
             // setup
-            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
-
             val command = QuestionResolveCommand(
                 questionId = "QUESTION1",
                 answerId = "ANSWER1",
@@ -323,8 +309,6 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         @Test
         fun `cannot resovle question by not exist answer`() {
             // setup
-            inMemoryUserRepository().save(User(UserId("USER2"), NORMAL))
-
             val command = QuestionResolveCommand(
                 questionId = "QUESTION1",
                 answerId = "ANSWER2",

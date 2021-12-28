@@ -1,10 +1,17 @@
 package org.direct.domain.question
 
+import org.direct.domain.DomainException
 import org.direct.domain.answer.AnswerId
 
-sealed interface QuestionResolveStatus
+sealed interface QuestionResolveStatus {
+
+    fun toResolved(answerId: AnswerId): QuestionResolved
+
+}
 
 class QuestionUnResolve : QuestionResolveStatus {
+
+    override fun toResolved(answerId: AnswerId): QuestionResolved = QuestionResolved(answerId)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -19,6 +26,10 @@ class QuestionUnResolve : QuestionResolveStatus {
 }
 
 class QuestionResolved(val resolvedAnswerId: AnswerId) : QuestionResolveStatus {
+
+    override fun toResolved(answerId: AnswerId): QuestionResolved {
+        throw DomainException("question already resolved")
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

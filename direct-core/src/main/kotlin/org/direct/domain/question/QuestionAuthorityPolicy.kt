@@ -5,26 +5,26 @@ import org.direct.domain.user.UserId
 
 object QuestionAuthorityPolicy {
 
-    fun canEdit(questioner: UserId, editUser: User): Boolean = when {
-        isQuestioner(questioner, editUser) -> true
-        editUser.isAuditor() -> true
+    infix fun User.canEdit(question: Question): Boolean = when {
+        isQuestioner(question.questioner) -> true
+        isAuditor() -> true
         else -> false
     }
 
-    fun canPublic(questioner: UserId, operateUser: User): Boolean = when {
-        isQuestioner(questioner, operateUser) -> true
-        operateUser.isAuditor() -> true
+    infix fun User.canPublic(question: Question): Boolean = when {
+        isQuestioner(question.questioner) -> true
+        isAuditor() -> true
         else -> false
     }
 
-    fun canDelete(questioner: UserId, operateUser: User): Boolean = when {
-        isQuestioner(questioner, operateUser) -> true
-        operateUser.isAuditor() -> true
+    infix fun User.canDelete(question: Question): Boolean = when {
+        isQuestioner(question.questioner) -> true
+        isAuditor() -> true
         else -> false
     }
 
-    fun canResolve(questioner: UserId, operateUser: User): Boolean = isQuestioner(questioner, operateUser)
+    infix fun User.canResolve(question: Question): Boolean = isQuestioner(question.questioner)
 
-    private fun isQuestioner(questioner: UserId, user: User) = questioner == user.id
+    private fun User.isQuestioner(questioner: UserId) = questioner == id
 
 }

@@ -4,6 +4,10 @@ package org.direct.domain.question
 
 import org.direct.domain.DomainException
 import org.direct.domain.answer.AnswerId
+import org.direct.domain.question.QuestionAuthorityPolicy.canDelete
+import org.direct.domain.question.QuestionAuthorityPolicy.canEdit
+import org.direct.domain.question.QuestionAuthorityPolicy.canPublic
+import org.direct.domain.question.QuestionAuthorityPolicy.canResolve
 import org.direct.domain.question.QuestionVisibility.*
 import org.direct.domain.user.User
 import org.direct.domain.user.UserId
@@ -56,7 +60,7 @@ class Question(
         private set
 
     fun editTitle(newTitle: String, editUser: User) {
-        if (QuestionAuthorityPolicy.canEdit(questioner, editUser).not())
+        if ((editUser canEdit this).not())
             throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
         if (visibility == DELETED)
             throw DomainException("question already deleted : questionId=[${id.rawId}]")
@@ -65,7 +69,7 @@ class Question(
     }
 
     fun editSubject(newSubject: String, editUser: User) {
-        if (QuestionAuthorityPolicy.canEdit(questioner, editUser).not())
+        if ((editUser canEdit this).not())
             throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
         if (visibility == DELETED)
             throw DomainException("question already deleted : questionId=[${id.rawId}]")
@@ -74,7 +78,7 @@ class Question(
     }
 
     fun public(operateUser: User) {
-        if (QuestionAuthorityPolicy.canPublic(questioner, operateUser).not())
+        if ((operateUser canPublic this).not())
             throw DomainException("user not allowed public : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         if (QuestionVisibilityAndResolveStatusPolicy.validate(PUBLIC, resolveStatus).not())
             throw DomainException("can't public question : questionId=[${id.rawId}]")
@@ -83,7 +87,7 @@ class Question(
     }
 
     fun delete(operateUser: User) {
-        if (QuestionAuthorityPolicy.canDelete(questioner, operateUser).not())
+        if ((operateUser canDelete this).not())
             throw DomainException("user not allowd delete : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         if (QuestionVisibilityAndResolveStatusPolicy.validate(DELETED, resolveStatus).not())
             throw DomainException("can't delete question : questionId=[${id.rawId}]")
@@ -92,7 +96,7 @@ class Question(
     }
 
     fun resolve(resolvedAnswerId: AnswerId, operateUser: User) {
-        if (QuestionAuthorityPolicy.canResolve(questioner, operateUser).not())
+        if ((operateUser canResolve this).not())
             throw DomainException("user not allowd resolve : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         if (QuestionVisibilityAndResolveStatusPolicy.validate(visibility, QuestionResolved(resolvedAnswerId)).not())
             throw DomainException("can't question to resolved : questionId=[${id.rawId}]")

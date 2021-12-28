@@ -20,11 +20,11 @@ class Question(
     subject: String,
     val questioner: UserId,
     visibility: QuestionVisibility,
-    resolved: QuestionResolveStatus,
+    resolveStatus: QuestionResolveStatus,
 ) {
 
     init {
-        QuestionVisibilityAndResolveStatusPolicy.validate(visibility, resolved)
+        QuestionVisibilityAndResolveStatusPolicy.validate(visibility, resolveStatus)
     }
 
     companion object {
@@ -35,7 +35,7 @@ class Question(
             subject = subject,
             questioner = questioner,
             visibility = BEFORE_PUBLIC,
-            resolved = QuestionUnResolve(),
+            resolveStatus = QuestionUnResolve(),
         )
 
         fun newPublic(id: QuestionId, title: String, subject: String, questioner: UserId): Question = Question(
@@ -44,7 +44,7 @@ class Question(
             subject = subject,
             questioner = questioner,
             visibility = PUBLIC,
-            resolved = QuestionUnResolve(),
+            resolveStatus = QuestionUnResolve(),
         )
 
     }
@@ -58,7 +58,7 @@ class Question(
     var visibility: QuestionVisibility = visibility
         private set
 
-    var resolveStatus: QuestionResolveStatus = resolved
+    var resolveStatus: QuestionResolveStatus = resolveStatus
         private set
 
     fun editTitle(newTitle: String, editUser: User) {

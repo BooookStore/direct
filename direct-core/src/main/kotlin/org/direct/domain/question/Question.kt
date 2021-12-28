@@ -1,11 +1,10 @@
-@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+@file:Suppress("MemberVisibilityCanBePrivate")
 
 package org.direct.domain.question
 
 import org.direct.domain.DomainException
 import org.direct.domain.answer.AnswerId
-import org.direct.domain.question.QuestionVisibility.BEFORE_PUBLIC
-import org.direct.domain.question.QuestionVisibility.PUBLIC
+import org.direct.domain.question.QuestionVisibility.*
 import org.direct.domain.user.User
 import org.direct.domain.user.UserId
 
@@ -17,6 +16,10 @@ class Question(
     visibility: QuestionVisibility,
     resolved: QuestionResolveStatus,
 ) {
+
+    init {
+        QuestionVisibilityAndResolveStatusPolicy.validate(visibility, resolved)
+    }
 
     companion object {
 
@@ -54,34 +57,45 @@ class Question(
 
     fun editTitle(newTitle: String, editUser: User) {
         if (canEdit(editUser).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
+        if (visibility == DELETED) throw DomainException("question already deleted : questionId=[${id.rawId}]")
+
         title = newTitle
     }
 
     fun editSubject(newSubject: String, editUser: User) {
         if (canEdit(editUser).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
+        if (visibility == DELETED) throw DomainException("question already deleted : questionId=[${id.rawId}]")
+
         subject = newSubject
     }
 
     fun public(operateUser: User) {
-        if (canPublic(operateUser).not()) throw DomainException("user not allowed public : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+        if (canPublic(operateUser).not())
+            throw DomainException("user not allowed public : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+        if (QuestionVisibilityAndResolveStatusPolicy.validate(PUBLIC, resolveStatus).not())
+            throw DomainException("can't public question : questionId=[${id.rawId}]")
+
         visibility = visibility.public()
     }
 
     fun delete(operateUser: User) {
-        if (canDelete(operateUser).not()) throw DomainException("user not allowd delete : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+        if (canDelete(operateUser).not())
+            throw DomainException("user not allowd delete : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+        if (QuestionVisibilityAndResolveStatusPolicy.validate(DELETED, resolveStatus).not())
+            throw DomainException("can't delete question : questionId=[${id.rawId}]")
+
         visibility = visibility.delete()
     }
 
     fun resolve(resolvedAnswerId: AnswerId, operateUser: User) {
-        if (resolveStatus is QuestionResolved) throw DomainException("question already resolved : questionId=[${id.rawId}]")
-        if (visibility != PUBLIC) throw DomainException("can't not public question to resolve : questionId=[${id.rawId}]")
-        if (canResolve(operateUser).not()) throw DomainException("user not allowd resolve : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+        if (resolveStatus is QuestionResolved)
+            throw DomainException("question already resolved : questionId=[${id.rawId}]")
+        if (canResolve(operateUser).not())
+            throw DomainException("user not allowd resolve : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+        if (QuestionVisibilityAndResolveStatusPolicy.validate(visibility, QuestionResolved(resolvedAnswerId)).not())
+            throw DomainException("can't question to resolved : questionId=[${id.rawId}]")
 
         resolveStatus = QuestionResolved(resolvedAnswerId)
-    }
-
-    fun isIdentifiedBy(otherQuestion: Question): Boolean {
-        return id == otherQuestion.id
     }
 
     private fun canEdit(editUser: User): Boolean = when {
@@ -96,7 +110,7 @@ class Question(
         else -> false
     }
 
-    fun canDelete(operateUser: User): Boolean = when {
+    private fun canDelete(operateUser: User): Boolean = when {
         isQuestioner(operateUser) -> true
         operateUser.isAuditor() -> true
         else -> false

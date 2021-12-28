@@ -62,15 +62,15 @@ class Question(
         private set
 
     fun editTitle(newTitle: String, editUser: User) {
-        if ((editUser allowedEdit this).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
         if (visibility == DELETED) throw DomainException("question already deleted : questionId=[${id.rawId}]")
+        if ((editUser allowedEdit this).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
 
         title = newTitle
     }
 
     fun editSubject(newSubject: String, editUser: User) {
-        if ((editUser allowedEdit this).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
         if (visibility == DELETED) throw DomainException("question already deleted : questionId=[${id.rawId}]")
+        if ((editUser allowedEdit this).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
 
         subject = newSubject
     }
@@ -90,6 +90,7 @@ class Question(
     }
 
     fun resolve(resolvedAnswerId: AnswerId, operateUser: User) {
+        if (visibility == DELETED) throw DomainException("question already deleted : questionId=[${id.rawId}]")
         if ((operateUser allowResolve this).not()) throw DomainException("user not allowd resolve : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
         if ((visibility canCombineResolveStatus QuestionResolved(resolvedAnswerId)).not()) throw DomainException("can't question to resolved : questionId=[${id.rawId}]")
 

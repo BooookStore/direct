@@ -289,7 +289,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         }
 
         @Test
-        fun `cannot resovle question by other user`() {
+        fun `cannot resolve question by other user`() {
             // setup
             val command = QuestionResolveCommand(
                 questionId = "QUESTION1",
@@ -307,7 +307,7 @@ internal class QuestionApplicationServiceTest : ApplicationServiceTestSupport() 
         }
 
         @Test
-        fun `cannot resovle question by not exist answer`() {
+        fun `cannot resolve question by not exist answer`() {
             // setup
             val command = QuestionResolveCommand(
                 questionId = "QUESTION1",

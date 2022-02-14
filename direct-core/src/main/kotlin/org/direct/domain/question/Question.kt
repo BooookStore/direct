@@ -60,15 +60,15 @@ class Question(
         private set
 
     fun editTitle(newTitle: String, editUser: User) {
-        if (visibility == DELETED) throw DomainException("question already deleted : questionId=[${id.rawId}]")
         if ((editUser canEdit this).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
+        if (visibility == DELETED) throw DomainException("question already deleted : questionId=[${id.rawId}]")
 
         title = newTitle
     }
 
     fun editSubject(newSubject: String, editUser: User) {
-        if (visibility == DELETED) throw DomainException("question already deleted : questionId=[${id.rawId}]")
         if ((editUser canEdit this).not()) throw DomainException("user not allowed edit : userId=[${editUser.id.rawId}] questionId=[${id.rawId}]")
+        if (visibility == DELETED) throw DomainException("question already deleted : questionId=[${id.rawId}]")
 
         subject = newSubject
     }
@@ -86,8 +86,8 @@ class Question(
     }
 
     fun resolve(resolvedAnswerId: AnswerId, operateUser: User) {
-        if ((visibility == DELETED) or (visibility == BEFORE_PUBLIC)) throw DomainException("question already deleted : questionId=[${id.rawId}]")
         if ((operateUser canResolve this).not()) throw DomainException("user not allowed resolve : userId=[${operateUser.id.rawId}] questionId=[${id.rawId}]")
+        if ((visibility == DELETED) or (visibility == BEFORE_PUBLIC)) throw DomainException("question already deleted : questionId=[${id.rawId}]")
 
         resolveStatus = resolveStatus.toResolved(resolvedAnswerId)
     }

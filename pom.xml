@@ -19,5 +19,6 @@
 
     <modules>
         <module>direct-core</module>
+        <module>direct-spring-boot</module>
     </modules>
 </project>

@@ -7,9 +7,10 @@
     "vcs": {
       "sarifIdea": {
         "repositoryUri": "https://github.com/BooookStore/direct",
-        "revisionId": "0b678581af8b8794e56b333acafa4890025c0c19",
+        "revisionId": "9e256eaf8f7000936fbd8355d57fbcaca4d4eaa1",
         "branch": "main"
       }
-    }
+    },
+    "deviceId": "200820300000000-63ff-6426-4dee-cf682af43e23"
   }
 }

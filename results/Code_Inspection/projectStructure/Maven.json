@@ -1,12 +1,12 @@
 {
   "libraries": [
     {
-      "ideaName": "Maven: org.jetbrains.kotlin:kotlin-stdlib:1.5.31",
+      "ideaName": "Maven: org.jetbrains.kotlin:kotlin-stdlib:1.6.0",
       "unresolved": false,
       "groupId": "org.jetbrains.kotlin",
       "artifactId": "kotlin-stdlib",
-      "version": "1.5.31",
-      "baseVersion": "1.5.31",
+      "version": "1.6.0",
+      "baseVersion": "1.6.0",
       "type": "jar",
       "optional": false,
       "scope": "compile"
@@ -23,12 +23,12 @@
       "scope": "compile"
     },
     {
-      "ideaName": "Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.5.31",
+      "ideaName": "Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.6.0",
       "unresolved": false,
       "groupId": "org.jetbrains.kotlin",
       "artifactId": "kotlin-stdlib-common",
-      "version": "1.5.31",
-      "baseVersion": "1.5.31",
+      "version": "1.6.0",
+      "baseVersion": "1.6.0",
       "type": "jar",
       "optional": false,
       "scope": "compile"

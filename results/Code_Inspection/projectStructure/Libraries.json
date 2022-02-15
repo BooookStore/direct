@@ -1,9 +1,9 @@
 {
   "libraries": [
     {
-      "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib:1.5.31",
+      "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib:1.6.0",
       "roots": [
-        "jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.5.31/kotlin-stdlib-1.5.31.jar!/"
+        "jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.6.0/kotlin-stdlib-1.6.0.jar!/"
       ]
     },
     {
@@ -13,9 +13,9 @@
       ]
     },
     {
-      "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.5.31",
+      "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.6.0",
       "roots": [
-        "jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.5.31/kotlin-stdlib-common-1.5.31.jar!/"
+        "jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib-common/1.6.0/kotlin-stdlib-common-1.6.0.jar!/"
       ]
     },
     {

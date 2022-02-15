@@ -29,7 +29,7 @@
           "type": "Own sources"
         },
         {
-          "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib:1.5.31",
+          "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib:1.6.0",
           "type": "Library"
         },
         {
@@ -37,7 +37,7 @@
           "type": "Library"
         },
         {
-          "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.5.31",
+          "name": "Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.6.0",
           "type": "Library"
         },
         {
